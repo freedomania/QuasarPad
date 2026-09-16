@@ -8,7 +8,7 @@
         Background="{DynamicResource WindowBackground}">
 
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="{DynamicResource MenuBackground}">
+        <Menu DockPanel.Dock="Top" Background="{DynamicResource MenuBackground}" Foreground="{DynamicResource MenuForeground}">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" InputGestureText="Ctrl+N" Click="New_Click"/>
                 <MenuItem Header="_Open..." InputGestureText="Ctrl+O" Click="Open_Click"/>
@@ -43,6 +43,8 @@
             <MenuItem Header="_Tools">
                 <MenuItem Header="_Markdown to HTML..." Click="MarkdownToHtml_Click"/>
                 <MenuItem Header="_JSON Format" Click="JsonFormat_Click"/>
+                <MenuItem Header="Format _Text" Click="FormatText_Click"/>
+                <MenuItem Header="_Reflow Paragraphs" Click="ReflowText_Click"/>
                 <Separator/>
                 <MenuItem Header="_Settings..." Click="Settings_Click"/>
             </MenuItem>
@@ -79,18 +81,18 @@
             
             <StatusBar x:Name="StatusBar" Grid.Row="1" Background="{DynamicResource StatusBarBackground}">
                 <StatusBarItem>
-                    <TextBlock x:Name="StatusLineCol" Text="Ln 1, Col 1"/>
+                    <TextBlock x:Name="StatusLineCol" Text="Ln 1, Col 1" Foreground="White"/>
                 </StatusBarItem>
                 <Separator/>
                 <StatusBarItem>
-                    <TextBlock x:Name="StatusEncoding" Text="UTF-8"/>
+                    <TextBlock x:Name="StatusEncoding" Text="UTF-8" Foreground="White"/>
                 </StatusBarItem>
                 <Separator/>
                 <StatusBarItem>
-                    <TextBlock x:Name="StatusMode" Text="Pure Mode"/>
+                    <TextBlock x:Name="StatusMode" Text="Pure Mode" Foreground="White"/>
                 </StatusBarItem>
                 <StatusBarItem HorizontalAlignment="Right">
-                    <TextBlock x:Name="StatusCharCount" Text="0 characters"/>
+                    <TextBlock x:Name="StatusCharCount" Text="0 characters" Foreground="White"/>
                 </StatusBarItem>
             </StatusBar>
         </Grid>
