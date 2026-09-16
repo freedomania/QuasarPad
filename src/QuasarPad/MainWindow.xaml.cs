@@ -16,6 +16,7 @@ namespace QuasarPad
         private bool _isDarkMode = false;
         private Encoding _currentEncoding = Encoding.UTF8;
         private readonly SettingsService _settingsService = new();
+        private readonly TextFormatService _textFormatService = new();
 
         public MainWindow()
         {
@@ -112,7 +113,6 @@ namespace QuasarPad
         private void New_Click(object sender, RoutedEventArgs e)
         {
             if (!ConfirmSaveIfNeeded()) return;
-
             MainEditor.Clear();
             _currentFilePath = null;
             _isModified = false;
@@ -226,8 +226,121 @@ namespace QuasarPad
         private void Copy_Click(object sender, RoutedEventArgs e) => MainEditor.Copy();
         private void Paste_Click(object sender, RoutedEventArgs e) => MainEditor.Paste();
         private void SelectAll_Click(object sender, RoutedEventArgs e) => MainEditor.SelectAll();
-        private void Find_Click(object sender, RoutedEventArgs e) => MessageBox.Show("Find will be available in the next update.", "Coming Soon");
-        private void Replace_Click(object sender, RoutedEventArgs e) => MessageBox.Show("Replace will be available in the next update.", "Coming Soon");
+
+        private void Find_Click(object sender, RoutedEventArgs e)
+        {
+            // Simple find using a basic prompt approach
+            var dialog = new Window
+            {
+                Title = "Find - QuasarPad",
+                Width = 360,
+                Height = 140,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            var panel = new StackPanel { Margin = new Thickness(12) };
+            var label = new TextBlock { Text = "Find what:", Margin = new Thickness(0, 0, 0, 6) };
+            var textBox = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 12) };
+            var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+            var btnFind = new Button { Content = "Find Next", Width = 90, Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
+            var btnCancel = new Button { Content = "Cancel", Width = 80, IsCancel = true };
+
+            btnFind.Click += (s, args) =>
+            {
+                string search = textBox.Text;
+                if (string.IsNullOrEmpty(search)) return;
+
+                int start = MainEditor.SelectionStart + MainEditor.SelectionLength;
+                int index = MainEditor.Text.IndexOf(search, start, StringComparison.OrdinalIgnoreCase);
+                if (index < 0)
+                    index = MainEditor.Text.IndexOf(search, 0, StringComparison.OrdinalIgnoreCase);
+
+                if (index >= 0)
+                {
+                    MainEditor.Select(index, search.Length);
+                    MainEditor.Focus();
+                }
+                else
+                {
+                    MessageBox.Show("Text not found.", "Find", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            };
+
+            btnCancel.Click += (s, args) => dialog.Close();
+            btnPanel.Children.Add(btnFind);
+            btnPanel.Children.Add(btnCancel);
+            panel.Children.Add(label);
+            panel.Children.Add(textBox);
+            panel.Children.Add(btnPanel);
+            dialog.Content = panel;
+            dialog.ShowDialog();
+        }
+
+        private void Replace_Click(object sender, RoutedEventArgs e)
+        {
+            var dialog = new Window
+            {
+                Title = "Replace - QuasarPad",
+                Width = 380,
+                Height = 200,
+                WindowStartupLocation = WindowStartupLocation.CenterOwner,
+                Owner = this,
+                ResizeMode = ResizeMode.NoResize
+            };
+
+            var panel = new StackPanel { Margin = new Thickness(12) };
+            panel.Children.Add(new TextBlock { Text = "Find what:", Margin = new Thickness(0, 0, 0, 4) });
+            var findBox = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 10) };
+            panel.Children.Add(findBox);
+            panel.Children.Add(new TextBlock { Text = "Replace with:", Margin = new Thickness(0, 0, 0, 4) });
+            var replaceBox = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 12) };
+            panel.Children.Add(replaceBox);
+
+            var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+            var btnReplaceAll = new Button { Content = "Replace All", Width = 100, Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
+            var btnCancel = new Button { Content = "Cancel", Width = 80, IsCancel = true };
+
+            btnReplaceAll.Click += (s, args) =>
+            {
+                string search = findBox.Text;
+                if (string.IsNullOrEmpty(search)) return;
+
+                string replace = replaceBox.Text ?? "";
+                int count = 0;
+                string text = MainEditor.Text;
+                int idx = 0;
+                var sb = new StringBuilder();
+
+                while (true)
+                {
+                    int found = text.IndexOf(search, idx, StringComparison.OrdinalIgnoreCase);
+                    if (found < 0)
+                    {
+                        sb.Append(text.Substring(idx));
+                        break;
+                    }
+                    sb.Append(text.Substring(idx, found - idx));
+                    sb.Append(replace);
+                    idx = found + search.Length;
+                    count++;
+                }
+
+                MainEditor.Text = sb.ToString();
+                _isModified = true;
+                UpdateTitle();
+                dialog.Close();
+                MessageBox.Show($"Replaced {count} occurrence(s).", "Replace", MessageBoxButton.OK, MessageBoxImage.Information);
+            };
+
+            btnCancel.Click += (s, args) => dialog.Close();
+            btnPanel.Children.Add(btnReplaceAll);
+            btnPanel.Children.Add(btnCancel);
+            panel.Children.Add(btnPanel);
+            dialog.Content = panel;
+            dialog.ShowDialog();
+        }
 
         private void WordWrap_Click(object sender, RoutedEventArgs e)
         {
@@ -236,7 +349,9 @@ namespace QuasarPad
 
         private void LineNumbers_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Full line numbers will be available after AvalonEdit integration.", "Info");
+            MessageBox.Show(
+                "Full line numbers will be available after AvalonEdit integration in a future update.\n\nCurrent version uses the standard TextBox.",
+                "Line Numbers", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         private void StatusBar_Click(object sender, RoutedEventArgs e)
@@ -269,6 +384,8 @@ namespace QuasarPad
             {
                 var parsed = System.Text.Json.JsonDocument.Parse(MainEditor.Text);
                 MainEditor.Text = System.Text.Json.JsonSerializer.Serialize(parsed, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
+                _isModified = true;
+                UpdateTitle();
             }
             catch
             {
@@ -276,9 +393,35 @@ namespace QuasarPad
             }
         }
 
+        private void FormatText_Click(object sender, RoutedEventArgs e)
+        {
+            MainEditor.Text = _textFormatService.FormatPlainText(MainEditor.Text);
+            _isModified = true;
+            UpdateTitle();
+            MessageBox.Show("Text formatted successfully.\n\n- Removed trailing spaces\n- Collapsed extra blank lines\n- Normalized spacing", "Format Text", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
+        private void ReflowText_Click(object sender, RoutedEventArgs e)
+        {
+            MainEditor.Text = _textFormatService.ReflowParagraphs(MainEditor.Text, 80);
+            _isModified = true;
+            UpdateTitle();
+            MessageBox.Show("Paragraphs reflowed successfully (approx. 80 characters per line).", "Reflow Paragraphs", MessageBoxButton.OK, MessageBoxImage.Information);
+        }
+
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
-            MessageBox.Show("Settings window coming soon.\n\nCurrent settings are auto-saved.", "Settings");
+            MessageBox.Show(
+                "Settings are saved automatically when you close the program.\n\n" +
+                "Current settings include:\n" +
+                "• Dark / Light mode\n" +
+                "• Pure Mode\n" +
+                "• Word Wrap\n" +
+                "• Window size\n\n" +
+                "A full Settings window will be added in a future update.",
+                "Settings - QuasarPad",
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
         }
 
         private void About_Click(object sender, RoutedEventArgs e)
@@ -287,7 +430,8 @@ namespace QuasarPad
                 "QuasarPad v1.0.0\n\n" +
                 "A clean, lightweight Notepad alternative for Windows.\n" +
                 "Pure Mode by default • Markdown to HTML • No telemetry\n\n" +
-                "Free and open. Support the project if you find it useful.",
+                "Free and open source (MIT License).\n" +
+                "Support the project if you find it useful.",
                 "About QuasarPad",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -297,11 +441,11 @@ namespace QuasarPad
         {
             MessageBox.Show(
                 "Thank you for considering supporting QuasarPad!\n\n" +
-                "Donation channels:\n" +
+                "Ways to support:\n" +
                 "• GitHub Sponsors (coming soon)\n" +
                 "• Ko-fi / Buy Me a Coffee (coming soon)\n" +
-                "• PromptPay (Thailand)\n\n" +
-                "Your support keeps the project free and independent.",
+                "• PromptPay (Thailand) - contact via GitHub\n\n" +
+                "Your support helps keep QuasarPad free, independent, and without ads or telemetry.",
                 "Support the Project",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
@@ -311,11 +455,13 @@ namespace QuasarPad
         {
             MessageBox.Show(
                 "Become a Supporter (optional)\n\n" +
-                "One-time or monthly support unlocks:\n" +
+                "Supporting the project is completely optional.\n" +
+                "QuasarPad remains fully free for everyone.\n\n" +
+                "Future Supporter benefits (planned):\n" +
                 "• Extra themes\n" +
-                "• Name in About page\n" +
-                "• Early access to updates\n\n" +
-                "This feature is coming soon.",
+                "• Name listed in About page\n" +
+                "• Early access to new features\n\n" +
+                "Thank you for your interest!",
                 "Become a Supporter",
                 MessageBoxButton.OK,
                 MessageBoxImage.Information);
