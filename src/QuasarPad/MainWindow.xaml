@@ -7,6 +7,13 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}">
 
+    <Window.Resources>
+        <Style TargetType="MenuItem">
+            <Setter Property="Foreground" Value="{DynamicResource MenuForeground}"/>
+            <Setter Property="Background" Value="{DynamicResource MenuBackground}"/>
+        </Style>
+    </Window.Resources>
+
     <DockPanel>
         <Menu DockPanel.Dock="Top" Background="{DynamicResource MenuBackground}" Foreground="{DynamicResource MenuForeground}">
             <MenuItem Header="_File">
@@ -42,6 +49,9 @@
             
             <MenuItem Header="_Tools">
                 <MenuItem Header="_Markdown to HTML..." Click="MarkdownToHtml_Click"/>
+                <MenuItem Header="_HTML Test..." Click="HtmlTest_Click"/>
+                <MenuItem Header="Text Too_ls..." Click="TextTools_Click"/>
+                <Separator/>
                 <MenuItem Header="_JSON Format" Click="JsonFormat_Click"/>
                 <MenuItem Header="Format _Text" Click="FormatText_Click"/>
                 <MenuItem Header="_Reflow Paragraphs" Click="ReflowText_Click"/>
