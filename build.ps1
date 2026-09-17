@@ -1,22 +1,19 @@
-# QuasarPad Build Script (run on Windows with .NET 8 SDK)
+# QuasarPad Build Script
+# Requires: .NET 8 SDK on the build machine
+# Runtime on user machine: .NET 8 Desktop Runtime (much smaller app)
 
-Write-Host "=== Building QuasarPad ===" -ForegroundColor Cyan
+Write-Host "=== Building QuasarPad (Framework-dependent, small size) ===" -ForegroundColor Cyan
 
-# Restore
 dotnet restore src/QuasarPad/QuasarPad.csproj
-
-# Build
 dotnet build src/QuasarPad/QuasarPad.csproj -c Release
 
-# Publish Self-contained Portable (recommended)
-Write-Host "`nPublishing Portable (Self-contained)..." -ForegroundColor Yellow
-dotnet publish src/QuasarPad/QuasarPad.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/Portable
+Write-Host "`nPublishing Framework-dependent (recommended, ~15-40MB)..." -ForegroundColor Yellow
+dotnet publish src/QuasarPad/QuasarPad.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish/Small
 
-# Publish Framework-dependent (smaller)
-Write-Host "Publishing Framework-dependent..." -ForegroundColor Yellow
-dotnet publish src/QuasarPad/QuasarPad.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish/FrameworkDependent
+Write-Host "`nOptional: Self-contained (large, no .NET install needed)..." -ForegroundColor DarkYellow
+dotnet publish src/QuasarPad/QuasarPad.csproj -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:IncludeNativeLibrariesForSelfExtract=true -o publish/PortableFull
 
-Write-Host "`n=== Build Complete ===" -ForegroundColor Green
-Write-Host "Portable version: publish/Portable/QuasarPad.exe"
-Write-Host "Framework version: publish/FrameworkDependent/QuasarPad.exe"
-Write-Host "`nFor Installer: Use Inno Setup or MSIX packaging with the Portable output."
+Write-Host "`n=== Done ===" -ForegroundColor Green
+Write-Host "Small build:  publish\Small\QuasarPad.exe"
+Write-Host "Full build:   publish\PortableFull\QuasarPad.exe"
+Write-Host "`nUsers of Small build need: https://dotnet.microsoft.com/download/dotnet/8.0 (Desktop Runtime)"
