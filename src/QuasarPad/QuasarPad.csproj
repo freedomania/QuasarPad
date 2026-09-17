@@ -8,23 +8,16 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>QuasarPad</AssemblyName>
     <RootNamespace>QuasarPad</RootNamespace>
-    <Version>1.0.0</Version>
+    <Version>1.1.0</Version>
     <Authors>QuasarPad Team</Authors>
     <Company>QuasarPad</Company>
     <Product>QuasarPad</Product>
-    <Description>A clean, lightweight Notepad alternative for Windows with Markdown to HTML support.</Description>
+    <Description>Offline Text and Markup Toolkit - Notepad alternative with Markdown to HTML, HTML Test, and Text Tools.</Description>
     <Copyright>Copyright © 2026</Copyright>
-    
-    <PublishSingleFile>true</PublishSingleFile>
-    <SelfContained>true</SelfContained>
-    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <PublishReadyToRun>true</PublishReadyToRun>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Markdig" Version="0.37.0" />
-    <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
   </ItemGroup>
 
   <ItemGroup>
