@@ -8,15 +8,10 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource WindowBackground}">
 
-    <Window.Resources>
-        <Style TargetType="MenuItem">
-            <Setter Property="Foreground" Value="{DynamicResource MenuForeground}"/>
-            <Setter Property="Background" Value="{DynamicResource MenuBackground}"/>
-        </Style>
-    </Window.Resources>
-
     <DockPanel>
-        <Menu DockPanel.Dock="Top" Background="{DynamicResource MenuBackground}" Foreground="{DynamicResource MenuForeground}">
+        <Menu DockPanel.Dock="Top"
+             Background="{DynamicResource MenuBackground}"
+             Foreground="{DynamicResource MenuForeground}">
             <MenuItem Header="_File">
                 <MenuItem Header="_New" InputGestureText="Ctrl+N" Click="New_Click"/>
                 <MenuItem Header="_Open..." InputGestureText="Ctrl+O" Click="Open_Click"/>
