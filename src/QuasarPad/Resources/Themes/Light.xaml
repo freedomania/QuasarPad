@@ -7,10 +7,27 @@
     <SolidColorBrush x:Key="MenuBackground" Color="#F3F3F3"/>
     <SolidColorBrush x:Key="MenuForeground" Color="#1E1E1E"/>
     <SolidColorBrush x:Key="MenuHoverBackground" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="MenuPopupBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="StatusBarBackground" Color="#007ACC"/>
     <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0"/>
     <SolidColorBrush x:Key="HighlightBrush" Color="#CCE8FF"/>
     <SolidColorBrush x:Key="ButtonBackground" Color="#E5E5E5"/>
     <SolidColorBrush x:Key="ButtonForeground" Color="#1E1E1E"/>
+
+    <Style TargetType="Menu">
+        <Setter Property="Background" Value="{StaticResource MenuBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
+    </Style>
+
+    <Style TargetType="MenuItem">
+        <Setter Property="Background" Value="{StaticResource MenuPopupBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
+        <Setter Property="Padding" Value="10,4"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource MenuHoverBackground}"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
 
 </ResourceDictionary>

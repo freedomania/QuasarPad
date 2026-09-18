@@ -5,12 +5,39 @@
     <SolidColorBrush x:Key="EditorBackground" Color="#1E1E1E"/>
     <SolidColorBrush x:Key="EditorForeground" Color="#D4D4D4"/>
     <SolidColorBrush x:Key="MenuBackground" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="MenuForeground" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="MenuForeground" Color="#F1F1F1"/>
     <SolidColorBrush x:Key="MenuHoverBackground" Color="#3E3E42"/>
+    <SolidColorBrush x:Key="MenuPopupBackground" Color="#252526"/>
     <SolidColorBrush x:Key="StatusBarBackground" Color="#007ACC"/>
     <SolidColorBrush x:Key="BorderBrush" Color="#3F3F46"/>
-    <SolidColorBrush x:Key="HighlightBrush" Color="#264F78"/>
+    <SolidColorBrush x:Key="HighlightBrush" Color="#094771"/>
     <SolidColorBrush x:Key="ButtonBackground" Color="#3E3E42"/>
-    <SolidColorBrush x:Key="ButtonForeground" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="ButtonForeground" Color="#F1F1F1"/>
+
+    <!-- Dark menu / submenu -->
+    <Style TargetType="Menu">
+        <Setter Property="Background" Value="{StaticResource MenuBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
+    </Style>
+
+    <Style TargetType="MenuItem">
+        <Setter Property="Background" Value="{StaticResource MenuPopupBackground}"/>
+        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
+        <Setter Property="Padding" Value="10,4"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="{StaticResource MenuHoverBackground}"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#888888"/>
+            </Trigger>
+        </Style.Triggers>
+    </Style>
+
+    <Style TargetType="Separator">
+        <Setter Property="Background" Value="{StaticResource BorderBrush}"/>
+        <Setter Property="Margin" Value="4,2"/>
+    </Style>
 
 </ResourceDictionary>
