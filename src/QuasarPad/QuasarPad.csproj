@@ -21,9 +21,4 @@
     <PackageReference Include="Markdig" Version="0.37.0" />
   </ItemGroup>
 
-  <!-- Theme dictionaries must be Page so ResourceDictionary Source works -->
-  <ItemGroup>
-    <Page Include="Resources\Themes\*.xaml" />
-  </ItemGroup>
-
 </Project>
