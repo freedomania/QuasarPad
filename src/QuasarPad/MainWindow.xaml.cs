@@ -4,7 +4,6 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
-using ICSharpCode.AvalonEdit.Document;
 using Microsoft.Win32;
 using QuasarPad.Services;
 using QuasarPad.Views;
@@ -20,6 +19,26 @@ namespace QuasarPad
         private Encoding _currentEncoding = Encoding.UTF8;
         private readonly SettingsService _settingsService = new();
         private readonly TextFormatService _textFormatService = new();
+
+        // Solid dark / light colors applied in code (reliable)
+        private static readonly SolidColorBrush DarkBg = BrushFrom("#1E1E1E");
+        private static readonly SolidColorBrush DarkFg = BrushFrom("#D4D4D4");
+        private static readonly SolidColorBrush DarkMenu = BrushFrom("#3C3C3C");
+        private static readonly SolidColorBrush DarkMenuFg = BrushFrom("#FFFFFF");
+        private static readonly SolidColorBrush DarkPopup = BrushFrom("#2D2D2D");
+        private static readonly SolidColorBrush DarkHighlight = BrushFrom("#094771");
+        private static readonly SolidColorBrush LightBg = BrushFrom("#FFFFFF");
+        private static readonly SolidColorBrush LightFg = BrushFrom("#1E1E1E");
+        private static readonly SolidColorBrush LightMenu = BrushFrom("#F0F0F0");
+        private static readonly SolidColorBrush LightHighlight = BrushFrom("#CCE8FF");
+        private static readonly SolidColorBrush StatusBlue = BrushFrom("#007ACC");
+
+        private static SolidColorBrush BrushFrom(string hex)
+        {
+            var b = (SolidColorBrush)new BrushConverter().ConvertFrom(hex)!;
+            b.Freeze();
+            return b;
+        }
 
         public MainWindow()
         {
@@ -75,16 +94,89 @@ namespace QuasarPad
 
         private void ApplyTheme()
         {
-            var dict = new ResourceDictionary();
-            dict.Source = new Uri(_isDarkMode
-                ? "Resources/Themes/Dark.xaml"
-                : "Resources/Themes/Light.xaml", UriKind.Relative);
-            Application.Current.Resources.MergedDictionaries.Clear();
-            Application.Current.Resources.MergedDictionaries.Add(dict);
+            if (_isDarkMode)
+            {
+                Background = DarkBg;
+                MainEditor.Background = DarkBg;
+                MainEditor.Foreground = DarkFg;
+                MainEditor.LineNumbersForeground = DarkMenuFg;
+                MainEditor.TextArea.Foreground = DarkFg;
+                if (MainEditor.TextArea.Selection != null)
+                {
+                    // selection colors handled by AvalonEdit defaults mostly
+                }
 
-            MainEditor.Background = (Brush)FindResource("EditorBackground");
-            MainEditor.Foreground = (Brush)FindResource("EditorForeground");
-            MainEditor.LineNumbersForeground = (Brush)FindResource("MenuForeground");
+                // Force system menu brushes so submenu is dark
+                Application.Current.Resources[SystemColors.MenuBrushKey] = DarkPopup;
+                Application.Current.Resources[SystemColors.MenuBarBrushKey] = DarkMenu;
+                Application.Current.Resources[SystemColors.MenuTextBrushKey] = DarkMenuFg;
+                Application.Current.Resources[SystemColors.HighlightBrushKey] = DarkHighlight;
+                Application.Current.Resources[SystemColors.HighlightTextBrushKey] = DarkMenuFg;
+                Application.Current.Resources[SystemColors.ControlBrushKey] = DarkPopup;
+                Application.Current.Resources[SystemColors.ControlTextBrushKey] = DarkMenuFg;
+                Application.Current.Resources[SystemColors.WindowBrushKey] = DarkBg;
+                Application.Current.Resources[SystemColors.WindowTextBrushKey] = DarkFg;
+
+                // Top menu bar
+                if (FindName("MainMenu") is Menu menu)
+                {
+                    menu.Background = DarkMenu;
+                    menu.Foreground = DarkMenuFg;
+                }
+                else
+                {
+                    // Menu is first child in DockPanel
+                    if (Content is DockPanel dp && dp.Children.Count > 0 && dp.Children[0] is Menu m)
+                    {
+                        m.Background = DarkMenu;
+                        m.Foreground = DarkMenuFg;
+                        foreach (var item in m.Items)
+                        {
+                            if (item is MenuItem mi)
+                            {
+                                mi.Foreground = DarkMenuFg;
+                                mi.Background = Brushes.Transparent;
+                            }
+                        }
+                    }
+                }
+
+                StatusBar.Background = StatusBlue;
+            }
+            else
+            {
+                Background = LightBg;
+                MainEditor.Background = LightBg;
+                MainEditor.Foreground = LightFg;
+                MainEditor.LineNumbersForeground = LightFg;
+                MainEditor.TextArea.Foreground = LightFg;
+
+                Application.Current.Resources[SystemColors.MenuBrushKey] = LightBg;
+                Application.Current.Resources[SystemColors.MenuBarBrushKey] = LightMenu;
+                Application.Current.Resources[SystemColors.MenuTextBrushKey] = LightFg;
+                Application.Current.Resources[SystemColors.HighlightBrushKey] = LightHighlight;
+                Application.Current.Resources[SystemColors.HighlightTextBrushKey] = LightFg;
+                Application.Current.Resources[SystemColors.ControlBrushKey] = LightBg;
+                Application.Current.Resources[SystemColors.ControlTextBrushKey] = LightFg;
+                Application.Current.Resources[SystemColors.WindowBrushKey] = LightBg;
+                Application.Current.Resources[SystemColors.WindowTextBrushKey] = LightFg;
+
+                if (Content is DockPanel dp && dp.Children.Count > 0 && dp.Children[0] is Menu m)
+                {
+                    m.Background = LightMenu;
+                    m.Foreground = LightFg;
+                    foreach (var item in m.Items)
+                    {
+                        if (item is MenuItem mi)
+                        {
+                            mi.Foreground = LightFg;
+                            mi.Background = Brushes.Transparent;
+                        }
+                    }
+                }
+
+                StatusBar.Background = StatusBlue;
+            }
         }
 
         private void UpdateTitle()
@@ -204,28 +296,14 @@ namespace QuasarPad
 
         private void Undo_Click(object sender, RoutedEventArgs e) => MainEditor.Undo();
         private void Redo_Click(object sender, RoutedEventArgs e) => MainEditor.Redo();
-
-        private void Cut_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainEditor.SelectionLength > 0) MainEditor.Cut();
-        }
-
-        private void Copy_Click(object sender, RoutedEventArgs e)
-        {
-            if (MainEditor.SelectionLength > 0) MainEditor.Copy();
-        }
-
+        private void Cut_Click(object sender, RoutedEventArgs e) { if (MainEditor.SelectionLength > 0) MainEditor.Cut(); }
+        private void Copy_Click(object sender, RoutedEventArgs e) { if (MainEditor.SelectionLength > 0) MainEditor.Copy(); }
         private void Paste_Click(object sender, RoutedEventArgs e) => MainEditor.Paste();
         private void SelectAll_Click(object sender, RoutedEventArgs e) => MainEditor.SelectAll();
 
         private void Find_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Window
-            {
-                Title = "Find", Width = 360, Height = 140,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Owner = this, ResizeMode = ResizeMode.NoResize
-            };
+            var dialog = new Window { Title = "Find", Width = 360, Height = 140, WindowStartupLocation = WindowStartupLocation.CenterOwner, Owner = this, ResizeMode = ResizeMode.NoResize };
             var panel = new StackPanel { Margin = new Thickness(12) };
             var tb = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 12) };
             var btnFind = new Button { Content = "Find Next", Width = 90, Margin = new Thickness(0, 0, 8, 0), IsDefault = true };
@@ -250,12 +328,7 @@ namespace QuasarPad
 
         private void Replace_Click(object sender, RoutedEventArgs e)
         {
-            var dialog = new Window
-            {
-                Title = "Replace", Width = 380, Height = 200,
-                WindowStartupLocation = WindowStartupLocation.CenterOwner,
-                Owner = this, ResizeMode = ResizeMode.NoResize
-            };
+            var dialog = new Window { Title = "Replace", Width = 380, Height = 200, WindowStartupLocation = WindowStartupLocation.CenterOwner, Owner = this, ResizeMode = ResizeMode.NoResize };
             var panel = new StackPanel { Margin = new Thickness(12) };
             var findBox = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 10) };
             var repBox = new TextBox { Height = 28, Margin = new Thickness(0, 0, 0, 12) };
@@ -290,12 +363,8 @@ namespace QuasarPad
             dialog.Content = panel; dialog.ShowDialog();
         }
 
-        private void WordWrap_Click(object sender, RoutedEventArgs e) =>
-            MainEditor.WordWrap = MenuWordWrap.IsChecked;
-
-        private void LineNumbers_Click(object sender, RoutedEventArgs e) =>
-            MainEditor.ShowLineNumbers = MenuLineNumbers.IsChecked;
-
+        private void WordWrap_Click(object sender, RoutedEventArgs e) => MainEditor.WordWrap = MenuWordWrap.IsChecked;
+        private void LineNumbers_Click(object sender, RoutedEventArgs e) => MainEditor.ShowLineNumbers = MenuLineNumbers.IsChecked;
         private void StatusBar_Click(object sender, RoutedEventArgs e) =>
             StatusBar.Visibility = MenuStatusBar.IsChecked ? Visibility.Visible : Visibility.Collapsed;
 
@@ -346,58 +415,27 @@ namespace QuasarPad
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             var win = new SettingsWindow(_settingsService) { Owner = this };
-            if (win.ShowDialog() == true)
-            {
-                LoadSettings();
-                UpdateStatusBar();
-            }
+            if (win.ShowDialog() == true) { LoadSettings(); UpdateStatusBar(); }
         }
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.2.1\n\n" +
-                "Offline Text & Markup Toolkit\n" +
-                "• Pure Mode + Line Numbers\n" +
-                "• Markdown → HTML (Live Preview)\n" +
-                "• HTML Test\n" +
-                "• Text Tools (Base64, Hash, URL...)\n" +
-                "• Settings\n\n" +
-                "No telemetry. MIT License.\n" +
-                "https://github.com/freedomania/QuasarPad",
+                "QuasarPad v1.2.2\n\nOffline Text & Markup Toolkit\nDark / Light theme applied in code for reliability.\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
 
         private void OpenGitHub_Click(object sender, RoutedEventArgs e)
         {
-            try
-            {
-                Process.Start(new ProcessStartInfo
-                {
-                    FileName = "https://github.com/freedomania/QuasarPad",
-                    UseShellExecute = true
-                });
-            }
+            try { Process.Start(new ProcessStartInfo { FileName = "https://github.com/freedomania/QuasarPad", UseShellExecute = true }); }
             catch { MessageBox.Show("https://github.com/freedomania/QuasarPad"); }
         }
 
         private void Support_Click(object sender, RoutedEventArgs e)
         {
-            var r = MessageBox.Show(
-                "QuasarPad is free and open source.\n\n" +
-                "The best way to support the project is to star it on GitHub\n" +
-                "or report issues / suggestions.\n\n" +
-                "Open the repository now?",
-                "Support the Project",
-                MessageBoxButton.YesNo,
-                MessageBoxImage.Information);
-            if (r == MessageBoxResult.Yes) OpenGitHub_Click(sender, e);
+            if (MessageBox.Show("Star the project on GitHub?\n\nOpen repository?", "Support", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                OpenGitHub_Click(sender, e);
         }
 
         private void Supporter_Click(object sender, RoutedEventArgs e) =>
-            MessageBox.Show(
-                "The app is free for everyone.\n\n" +
-                "If you find it useful, starring the GitHub repository helps\n" +
-                "others discover the project.\n\n" +
-                "https://github.com/freedomania/QuasarPad",
-                "Thank you");
+            MessageBox.Show("Free for everyone. Starring on GitHub helps.\n\nhttps://github.com/freedomania/QuasarPad", "Thank you");
     }
 }
