@@ -14,78 +14,42 @@
     <SolidColorBrush x:Key="ButtonBackground" Color="#3E3E42"/>
     <SolidColorBrush x:Key="ButtonForeground" Color="#F1F1F1"/>
 
+    <!-- Force system menu colors (this is what actually styles WPF submenus) -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#252526"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#2D2D30"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#094771"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#252526"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="#888888"/>
+
     <Style TargetType="Menu">
         <Setter Property="Background" Value="#2D2D30"/>
         <Setter Property="Foreground" Value="#F1F1F1"/>
     </Style>
 
+    <!-- Flat items: transparent by default, only highlight when hovered -->
     <Style TargetType="MenuItem">
         <Setter Property="Foreground" Value="#F1F1F1"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Padding" Value="10,5"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="MenuItem">
-                    <Border x:Name="Bd"
-                            Background="{TemplateBinding Background}"
-                            BorderThickness="0"
-                            Padding="{TemplateBinding Padding}"
-                            SnapsToDevicePixels="True">
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Icon"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="Shortcut"/>
-                                <ColumnDefinition Width="14"/>
-                            </Grid.ColumnDefinitions>
-                            <ContentPresenter Grid.Column="0" ContentSource="Icon" Margin="0,0,6,0" VerticalAlignment="Center"/>
-                            <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True" VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}" Margin="16,0,0,0" Opacity="0.65" VerticalAlignment="Center"/>
-                            <Popup x:Name="PART_Popup"
-                                   Placement="Right"
-                                   IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
-                                   AllowsTransparency="True"
-                                   Focusable="False"
-                                   PopupAnimation="Fade">
-                                <Border Background="#252526" BorderBrush="#3F3F46" BorderThickness="1" Padding="2" MinWidth="180">
-                                    <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
-                                </Border>
-                            </Popup>
-                        </Grid>
-                    </Border>
-                    <ControlTemplate.Triggers>
-                        <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="Bd" Property="Background" Value="#094771"/>
-                            <Setter Property="Foreground" Value="#FFFFFF"/>
-                        </Trigger>
-                        <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Foreground" Value="#888888"/>
-                        </Trigger>
-                        <Trigger Property="Role" Value="TopLevelHeader">
-                            <Setter TargetName="PART_Popup" Property="Placement" Value="Bottom"/>
-                        </Trigger>
-                        <MultiTrigger>
-                            <MultiTrigger.Conditions>
-                                <Condition Property="IsHighlighted" Value="True"/>
-                                <Condition Property="Role" Value="TopLevelHeader"/>
-                            </MultiTrigger.Conditions>
-                            <Setter TargetName="Bd" Property="Background" Value="#3E3E42"/>
-                        </MultiTrigger>
-                    </ControlTemplate.Triggers>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Style.Triggers>
+            <Trigger Property="IsHighlighted" Value="True">
+                <Setter Property="Background" Value="#094771"/>
+                <Setter Property="Foreground" Value="#FFFFFF"/>
+            </Trigger>
+            <Trigger Property="IsEnabled" Value="False">
+                <Setter Property="Foreground" Value="#888888"/>
+            </Trigger>
+        </Style.Triggers>
     </Style>
 
     <Style TargetType="Separator">
-        <Setter Property="OverridesDefaultStyle" Value="True"/>
-        <Setter Property="Template">
-            <Setter.Value>
-                <ControlTemplate TargetType="Separator">
-                    <Border Height="1" Background="#3F3F46" Margin="8,4"/>
-                </ControlTemplate>
-            </Setter.Value>
-        </Setter>
+        <Setter Property="Background" Value="#3F3F46"/>
+        <Setter Property="Margin" Value="8,4"/>
+        <Setter Property="Height" Value="1"/>
     </Style>
 
 </ResourceDictionary>
