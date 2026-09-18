@@ -8,11 +8,11 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>QuasarPad</AssemblyName>
     <RootNamespace>QuasarPad</RootNamespace>
-    <Version>1.2.0</Version>
+    <Version>1.2.2</Version>
     <Authors>QuasarPad Team</Authors>
     <Company>QuasarPad</Company>
     <Product>QuasarPad</Product>
-    <Description>Offline Text and Markup Toolkit - Pure Mode Notepad with Markdown to HTML, HTML Test, Text Tools.</Description>
+    <Description>Offline Text and Markup Toolkit</Description>
     <Copyright>Copyright © 2026</Copyright>
   </PropertyGroup>
 
@@ -21,8 +21,9 @@
     <PackageReference Include="Markdig" Version="0.37.0" />
   </ItemGroup>
 
+  <!-- Theme dictionaries must be Page so ResourceDictionary Source works -->
   <ItemGroup>
-    <Resource Include="Resources\**\*" />
+    <Page Include="Resources\Themes\*.xaml" />
   </ItemGroup>
 
 </Project>
