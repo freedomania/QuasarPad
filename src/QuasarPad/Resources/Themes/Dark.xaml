@@ -1,40 +1,41 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- Proper Dark Mode colors (VS Code-like) -->
     <SolidColorBrush x:Key="WindowBackground" Color="#1E1E1E"/>
     <SolidColorBrush x:Key="EditorBackground" Color="#1E1E1E"/>
     <SolidColorBrush x:Key="EditorForeground" Color="#D4D4D4"/>
-    <SolidColorBrush x:Key="MenuBackground" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="MenuForeground" Color="#F1F1F1"/>
-    <SolidColorBrush x:Key="MenuHoverBackground" Color="#094771"/>
-    <SolidColorBrush x:Key="MenuPopupBackground" Color="#252526"/>
+    <SolidColorBrush x:Key="MenuBackground" Color="#3C3C3C"/>
+    <SolidColorBrush x:Key="MenuForeground" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="MenuHoverBackground" Color="#505050"/>
+    <SolidColorBrush x:Key="MenuPopupBackground" Color="#2D2D2D"/>
     <SolidColorBrush x:Key="StatusBarBackground" Color="#007ACC"/>
-    <SolidColorBrush x:Key="BorderBrush" Color="#3F3F46"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#555555"/>
     <SolidColorBrush x:Key="HighlightBrush" Color="#094771"/>
-    <SolidColorBrush x:Key="ButtonBackground" Color="#3E3E42"/>
-    <SolidColorBrush x:Key="ButtonForeground" Color="#F1F1F1"/>
+    <SolidColorBrush x:Key="ButtonBackground" Color="#3C3C3C"/>
+    <SolidColorBrush x:Key="ButtonForeground" Color="#FFFFFF"/>
 
-    <!-- Force system menu colors (this is what actually styles WPF submenus) -->
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#252526"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#2D2D30"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#F1F1F1"/>
+    <!-- System menu colors for Dark -->
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#2D2D2D"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#3C3C3C"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#094771"/>
     <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#FFFFFF"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#252526"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#F1F1F1"/>
-    <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="#888888"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#2D2D2D"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#D4D4D4"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.GrayTextBrushKey}" Color="#999999"/>
 
     <Style TargetType="Menu">
-        <Setter Property="Background" Value="#2D2D30"/>
-        <Setter Property="Foreground" Value="#F1F1F1"/>
+        <Setter Property="Background" Value="#3C3C3C"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
     </Style>
 
-    <!-- Flat items: transparent by default, only highlight when hovered -->
     <Style TargetType="MenuItem">
-        <Setter Property="Foreground" Value="#F1F1F1"/>
+        <Setter Property="Foreground" Value="#FFFFFF"/>
         <Setter Property="Background" Value="Transparent"/>
         <Setter Property="Padding" Value="12,6"/>
-        <Setter Property="BorderThickness" Value="0"/>
         <Style.Triggers>
             <Trigger Property="IsHighlighted" Value="True">
                 <Setter Property="Background" Value="#094771"/>
@@ -44,12 +45,6 @@
                 <Setter Property="Foreground" Value="#888888"/>
             </Trigger>
         </Style.Triggers>
-    </Style>
-
-    <Style TargetType="Separator">
-        <Setter Property="Background" Value="#3F3F46"/>
-        <Setter Property="Margin" Value="8,4"/>
-        <Setter Property="Height" Value="1"/>
     </Style>
 
 </ResourceDictionary>

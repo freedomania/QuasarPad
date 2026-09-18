@@ -1,31 +1,43 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
 
+    <!-- Proper Light Mode -->
     <SolidColorBrush x:Key="WindowBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="EditorBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="EditorForeground" Color="#1E1E1E"/>
-    <SolidColorBrush x:Key="MenuBackground" Color="#F3F3F3"/>
+    <SolidColorBrush x:Key="MenuBackground" Color="#F0F0F0"/>
     <SolidColorBrush x:Key="MenuForeground" Color="#1E1E1E"/>
-    <SolidColorBrush x:Key="MenuHoverBackground" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="MenuHoverBackground" Color="#D8E8F8"/>
     <SolidColorBrush x:Key="MenuPopupBackground" Color="#FFFFFF"/>
     <SolidColorBrush x:Key="StatusBarBackground" Color="#007ACC"/>
-    <SolidColorBrush x:Key="BorderBrush" Color="#E0E0E0"/>
+    <SolidColorBrush x:Key="BorderBrush" Color="#CCCEDB"/>
     <SolidColorBrush x:Key="HighlightBrush" Color="#CCE8FF"/>
-    <SolidColorBrush x:Key="ButtonBackground" Color="#E5E5E5"/>
+    <SolidColorBrush x:Key="ButtonBackground" Color="#F0F0F0"/>
     <SolidColorBrush x:Key="ButtonForeground" Color="#1E1E1E"/>
 
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuBarBrushKey}" Color="#F0F0F0"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.MenuTextBrushKey}" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightBrushKey}" Color="#CCE8FF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.HighlightTextBrushKey}" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.ControlTextBrushKey}" Color="#1E1E1E"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowBrushKey}" Color="#FFFFFF"/>
+    <SolidColorBrush x:Key="{x:Static SystemColors.WindowTextBrushKey}" Color="#1E1E1E"/>
+
     <Style TargetType="Menu">
-        <Setter Property="Background" Value="{StaticResource MenuBackground}"/>
-        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
+        <Setter Property="Background" Value="#F0F0F0"/>
+        <Setter Property="Foreground" Value="#1E1E1E"/>
     </Style>
 
     <Style TargetType="MenuItem">
-        <Setter Property="Background" Value="{StaticResource MenuPopupBackground}"/>
-        <Setter Property="Foreground" Value="{StaticResource MenuForeground}"/>
-        <Setter Property="Padding" Value="10,4"/>
+        <Setter Property="Foreground" Value="#1E1E1E"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="12,6"/>
         <Style.Triggers>
             <Trigger Property="IsHighlighted" Value="True">
-                <Setter Property="Background" Value="{StaticResource MenuHoverBackground}"/>
+                <Setter Property="Background" Value="#CCE8FF"/>
+                <Setter Property="Foreground" Value="#1E1E1E"/>
             </Trigger>
         </Style.Triggers>
     </Style>
