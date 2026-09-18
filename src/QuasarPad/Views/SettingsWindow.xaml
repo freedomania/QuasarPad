@@ -48,7 +48,7 @@
                                Foreground="{DynamicResource EditorForeground}"/>
                 </StackPanel>
 
-                <TextBlock Text="About settings" FontSize="12" Opacity="0.7"
+                <TextBlock FontSize="12" Opacity="0.7"
                            Foreground="{DynamicResource EditorForeground}"
                            TextWrapping="Wrap"
                            Text="Settings are stored in %AppData%\QuasarPad\settings.json and load automatically next time."/>
