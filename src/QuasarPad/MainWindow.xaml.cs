@@ -82,7 +82,6 @@ namespace QuasarPad
             Application.Current.Resources.MergedDictionaries.Clear();
             Application.Current.Resources.MergedDictionaries.Add(dict);
 
-            // AvalonEdit needs explicit colors after theme change
             MainEditor.Background = (Brush)FindResource("EditorBackground");
             MainEditor.Foreground = (Brush)FindResource("EditorForeground");
             MainEditor.LineNumbersForeground = (Brush)FindResource("MenuForeground");
@@ -208,18 +207,15 @@ namespace QuasarPad
 
         private void Cut_Click(object sender, RoutedEventArgs e)
         {
-            if (MainEditor.SelectionLength > 0)
-                MainEditor.Cut();
+            if (MainEditor.SelectionLength > 0) MainEditor.Cut();
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)
         {
-            if (MainEditor.SelectionLength > 0)
-                MainEditor.Copy();
+            if (MainEditor.SelectionLength > 0) MainEditor.Copy();
         }
 
         private void Paste_Click(object sender, RoutedEventArgs e) => MainEditor.Paste();
-
         private void SelectAll_Click(object sender, RoutedEventArgs e) => MainEditor.SelectAll();
 
         private void Find_Click(object sender, RoutedEventArgs e)
@@ -359,13 +355,13 @@ namespace QuasarPad
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.2.0\n\n" +
+                "QuasarPad v1.2.1\n\n" +
                 "Offline Text & Markup Toolkit\n" +
-                "• Pure Mode + Line Numbers (AvalonEdit)\n" +
+                "• Pure Mode + Line Numbers\n" +
                 "• Markdown → HTML (Live Preview)\n" +
                 "• HTML Test\n" +
                 "• Text Tools (Base64, Hash, URL...)\n" +
-                "• Settings window\n\n" +
+                "• Settings\n\n" +
                 "No telemetry. MIT License.\n" +
                 "https://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
@@ -380,22 +376,28 @@ namespace QuasarPad
                     UseShellExecute = true
                 });
             }
-            catch { MessageBox.Show("Open: https://github.com/freedomania/QuasarPad"); }
+            catch { MessageBox.Show("https://github.com/freedomania/QuasarPad"); }
         }
 
         private void Support_Click(object sender, RoutedEventArgs e)
         {
             var r = MessageBox.Show(
-                "Support is optional.\n\nOpen the GitHub repo now?\nYou can star the project or open an issue there.\n\nSponsors / PromptPay links will be added later.",
-                "Support the Project", MessageBoxButton.YesNo, MessageBoxImage.Information);
+                "QuasarPad is free and open source.\n\n" +
+                "The best way to support the project is to star it on GitHub\n" +
+                "or report issues / suggestions.\n\n" +
+                "Open the repository now?",
+                "Support the Project",
+                MessageBoxButton.YesNo,
+                MessageBoxImage.Information);
             if (r == MessageBoxResult.Yes) OpenGitHub_Click(sender, e);
         }
 
         private void Supporter_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "Supporter is optional — the app stays free.\n\n" +
-                "Planned perks: extra themes, name in About, early features.\n\n" +
-                "For now, starring the GitHub repo helps a lot.",
-                "Become a Supporter");
+                "The app is free for everyone.\n\n" +
+                "If you find it useful, starring the GitHub repository helps\n" +
+                "others discover the project.\n\n" +
+                "https://github.com/freedomania/QuasarPad",
+                "Thank you");
     }
 }
