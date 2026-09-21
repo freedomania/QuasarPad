@@ -20,6 +20,9 @@ namespace QuasarPad
         private void Generators_Click(object sender, RoutedEventArgs e) =>
             new GeneratorsWindow { Owner = this }.Show();
 
+        private void UrlShorten_Click(object sender, RoutedEventArgs e) =>
+            new UrlShortenWindow(EditorText) { Owner = this }.Show();
+
         private void SortLines_Click(object sender, RoutedEventArgs e)
         {
             EditorText = _converter.SortLines(EditorText, false);

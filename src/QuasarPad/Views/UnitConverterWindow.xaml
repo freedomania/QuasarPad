@@ -1,7 +1,7 @@
 <Window x:Class="QuasarPad.Views.UnitConverterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Unit Converter - QuasarPad" Height="320" Width="480"
+        Title="Unit Converter - QuasarPad" Height="340" Width="500"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         Background="{DynamicResource WindowBackground}">
   <StackPanel Margin="16">
@@ -11,6 +11,11 @@
       <ComboBoxItem Content="Length"/>
       <ComboBoxItem Content="Weight"/>
       <ComboBoxItem Content="Data size"/>
+      <ComboBoxItem Content="Area"/>
+      <ComboBoxItem Content="Volume"/>
+      <ComboBoxItem Content="Speed"/>
+      <ComboBoxItem Content="Angle"/>
+      <ComboBoxItem Content="Time"/>
     </ComboBox>
     <Grid Margin="0,0,0,10">
       <Grid.ColumnDefinitions>

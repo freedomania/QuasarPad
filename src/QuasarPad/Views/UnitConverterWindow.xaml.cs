@@ -28,9 +28,14 @@ namespace QuasarPad.Views
             string cat = (CmbCategory.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Temperature";
             string[] units = cat switch
             {
-                "Length" => new[] { "mm", "cm", "m", "km", "in", "ft", "yd", "mi" },
-                "Weight" => new[] { "mg", "g", "kg", "oz", "lb", "t" },
-                "Data size" => new[] { "B", "KB", "MB", "GB", "TB" },
+                "Length" => new[] { "nm", "um", "mm", "cm", "m", "km", "in", "ft", "yd", "mi", "nmi" },
+                "Weight" => new[] { "mg", "g", "kg", "oz", "lb", "st", "t", "ct" },
+                "Data size" => new[] { "B", "KB", "MB", "GB", "TB", "PB" },
+                "Area" => new[] { "mm2", "cm2", "m2", "km2", "in2", "ft2", "yd2", "acre", "ha", "rai" },
+                "Volume" => new[] { "ml", "L", "m3", "tsp", "tbsp", "cup", "pt", "qt", "gal" },
+                "Speed" => new[] { "m/s", "km/h", "mph", "knot", "ft/s" },
+                "Angle" => new[] { "deg", "rad", "grad" },
+                "Time" => new[] { "ms", "s", "min", "h", "d", "wk" },
                 _ => new[] { "C", "F", "K" }
             };
             foreach (var u in units)
@@ -58,9 +63,14 @@ namespace QuasarPad.Views
                 "Length" => _svc.ConvertLength(val, from, to),
                 "Weight" => _svc.ConvertWeight(val, from, to),
                 "Data size" => _svc.ConvertData(val, from, to),
+                "Area" => _svc.ConvertArea(val, from, to),
+                "Volume" => _svc.ConvertVolume(val, from, to),
+                "Speed" => _svc.ConvertSpeed(val, from, to),
+                "Angle" => _svc.ConvertAngle(val, from, to),
+                "Time" => _svc.ConvertTime(val, from, to),
                 _ => _svc.TempFromC(_svc.TempToC(val, from), to)
             };
-            TxtResult.Text = result.ToString("G10", CultureInfo.InvariantCulture);
+            TxtResult.Text = result.ToString("G12", CultureInfo.InvariantCulture);
         }
 
         private void Copy_Click(object sender, RoutedEventArgs e)
