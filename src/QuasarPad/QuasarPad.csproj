@@ -8,17 +8,22 @@
     <UseWPF>true</UseWPF>
     <AssemblyName>QuasarPad</AssemblyName>
     <RootNamespace>QuasarPad</RootNamespace>
-    <Version>1.2.2</Version>
+    <Version>1.5.0</Version>
     <Authors>QuasarPad Team</Authors>
     <Company>QuasarPad</Company>
     <Product>QuasarPad</Product>
     <Description>Offline Text and Markup Toolkit</Description>
     <Copyright>Copyright © 2026</Copyright>
+    <ApplicationIcon Condition="Exists('Assets\\QuasarPad.ico')">Assets\QuasarPad.ico</ApplicationIcon>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="AvalonEdit" Version="6.3.0.90" />
     <PackageReference Include="Markdig" Version="0.37.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="Exists('Assets\\QuasarPad.ico')">
+    <Content Include="Assets\QuasarPad.ico" />
   </ItemGroup>
 
 </Project>
