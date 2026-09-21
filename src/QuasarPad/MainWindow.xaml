@@ -92,7 +92,17 @@
                 Background="{DynamicResource EditorBackground}"
                 Foreground="{DynamicResource EditorForeground}"
                 LineNumbersForeground="{DynamicResource MenuForeground}"
-                TextChanged="MainEditor_TextChanged"/>
+                TextChanged="MainEditor_TextChanged">
+                <avalonedit:TextEditor.ContextMenu>
+                    <ContextMenu>
+                        <MenuItem Header="Cut" InputGestureText="Ctrl+X" Click="Cut_Click"/>
+                        <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy_Click"/>
+                        <MenuItem Header="Paste" InputGestureText="Ctrl+V" Click="Paste_Click"/>
+                        <Separator/>
+                        <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll_Click"/>
+                    </ContextMenu>
+                </avalonedit:TextEditor.ContextMenu>
+            </avalonedit:TextEditor>
 
             <StatusBar x:Name="StatusBar" Grid.Row="1" Background="{DynamicResource StatusBarBackground}">
                 <StatusBarItem>
