@@ -2,8 +2,8 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         Title="Color Tools - QuasarPad"
-        Height="520" Width="620"
-        MinHeight="480" MinWidth="560"
+        Height="500" Width="600"
+        MinHeight="420" MinWidth="520"
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource WindowBackground}">
 
@@ -15,25 +15,22 @@
     </Grid.RowDefinitions>
 
     <TextBlock Grid.Row="0"
-               Text="Click a color · values stay fixed at the bottom"
+               Text="Click a color to fill HEX / RGB · then Copy"
                FontWeight="SemiBold"
                Foreground="{DynamicResource EditorForeground}"
                Margin="0,0,0,8"/>
 
-    <!-- Only the palette scrolls -->
     <Border Grid.Row="1"
             BorderBrush="#555555"
             BorderThickness="1"
             CornerRadius="4"
             Padding="4"
             Margin="0,0,0,10">
-      <ScrollViewer VerticalScrollBarVisibility="Auto"
-                    HorizontalScrollBarVisibility="Disabled">
+      <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
         <UniformGrid x:Name="PaletteGrid" Columns="10"/>
       </ScrollViewer>
     </Border>
 
-    <!-- HEX / RGB / buttons always visible -->
     <Border Grid.Row="2"
             BorderBrush="#555555"
             BorderThickness="1"
@@ -46,15 +43,15 @@
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0">
+        <StackPanel Grid.Column="0" VerticalAlignment="Center">
           <Grid Margin="0,0,0,6">
             <Grid.ColumnDefinitions>
               <ColumnDefinition Width="44"/>
               <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="HEX" VerticalAlignment="Center"
-                       Foreground="{DynamicResource EditorForeground}"/>
+            <TextBlock Text="HEX" VerticalAlignment="Center" Foreground="{DynamicResource EditorForeground}"/>
             <TextBox x:Name="TxtHex" Grid.Column="1" Height="26" FontFamily="Consolas" Text="#007ACC"
+                     IsReadOnly="True"
                      Background="{DynamicResource EditorBackground}"
                      Foreground="{DynamicResource EditorForeground}"/>
           </Grid>
@@ -67,29 +64,23 @@
               <ColumnDefinition Width="6"/>
               <ColumnDefinition Width="64"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="RGB" VerticalAlignment="Center"
-                       Foreground="{DynamicResource EditorForeground}"/>
-            <TextBox x:Name="TxtR" Grid.Column="1" Height="26" FontFamily="Consolas"
-                     Background="{DynamicResource EditorBackground}"
-                     Foreground="{DynamicResource EditorForeground}"/>
-            <TextBox x:Name="TxtG" Grid.Column="3" Height="26" FontFamily="Consolas"
-                     Background="{DynamicResource EditorBackground}"
-                     Foreground="{DynamicResource EditorForeground}"/>
-            <TextBox x:Name="TxtB" Grid.Column="5" Height="26" FontFamily="Consolas"
-                     Background="{DynamicResource EditorBackground}"
-                     Foreground="{DynamicResource EditorForeground}"/>
+            <TextBlock Text="RGB" VerticalAlignment="Center" Foreground="{DynamicResource EditorForeground}"/>
+            <TextBox x:Name="TxtR" Grid.Column="1" Height="26" FontFamily="Consolas" IsReadOnly="True"
+                     Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+            <TextBox x:Name="TxtG" Grid.Column="3" Height="26" FontFamily="Consolas" IsReadOnly="True"
+                     Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+            <TextBox x:Name="TxtB" Grid.Column="5" Height="26" FontFamily="Consolas" IsReadOnly="True"
+                     Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
           </Grid>
           <TextBlock x:Name="TxtName" FontSize="12" TextWrapping="Wrap"
                      Foreground="{DynamicResource EditorForeground}"/>
         </StackPanel>
 
-        <StackPanel Grid.Column="2" VerticalAlignment="Top">
-          <Border x:Name="Preview" Width="68" Height="68" Margin="0,0,0,6"
+        <StackPanel Grid.Column="2" VerticalAlignment="Center">
+          <Border x:Name="Preview" Width="64" Height="64" Margin="0,0,0,8"
                   BorderBrush="Gray" BorderThickness="1" CornerRadius="4"/>
-          <Button Content="HEX → RGB" Height="26" Margin="0,0,0,3" Click="HexToRgb_Click"/>
-          <Button Content="RGB → HEX" Height="26" Margin="0,0,0,3" Click="RgbToHex_Click"/>
-          <Button Content="Copy HEX" Height="26" Margin="0,0,0,3" Click="CopyHex_Click"/>
-          <Button Content="Copy RGB" Height="26" Click="CopyRgb_Click"/>
+          <Button Content="Copy HEX" Height="28" Margin="0,0,0,4" Click="CopyHex_Click"/>
+          <Button Content="Copy RGB" Height="28" Click="CopyRgb_Click"/>
         </StackPanel>
       </Grid>
     </Border>
