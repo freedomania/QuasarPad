@@ -5,8 +5,11 @@
       <stop offset="100%" stop-color="#0f172a"/>
     </radialGradient>
   </defs>
+  <!-- Outer disc -->
   <circle cx="128" cy="128" r="120" fill="url(#g)" stroke="#007ACC" stroke-width="8"/>
-  <circle cx="128" cy="128" r="88" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.7"/>
-  <text x="128" y="148" text-anchor="middle" font-family="Segoe UI, Arial, sans-serif" font-weight="700" font-size="140" fill="#7dd3fc">Q</text>
-  <circle cx="190" cy="70" r="6" fill="#ffffff"/>
+  <!-- Inner ring -->
+  <circle cx="128" cy="128" r="88" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.65"/>
+  <!-- Geometric Q centered (no font, no star) -->
+  <circle cx="128" cy="122" r="48" fill="none" stroke="#7dd3fc" stroke-width="18"/>
+  <line x1="155" y1="155" x2="178" y2="182" stroke="#7dd3fc" stroke-width="16" stroke-linecap="round"/>
 </svg>
