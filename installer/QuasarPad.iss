@@ -1,5 +1,5 @@
 ; QuasarPad — Inno Setup script (English UI)
-; 1. Put QuasarPad.ico in src\QuasarPad\Assets\ (optional but recommended)
+; 1. QuasarPad.ico at src\QuasarPad\Assets\
 ; 2. Publish Small build to ..\publish\Small
 ; 3. Open this file in Inno Setup → Build → Compile
 
@@ -16,17 +16,16 @@ AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
 AppSupportURL={#MyAppURL}
-DefaultDirName=C:\QuasarPad
+DefaultDirName={autopf}\QuasarPad
 DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=..\publish\Installer
 OutputBaseFilename=QuasarPad-Setup-{#MyAppVersion}
-; Icon for the setup.exe and shortcuts (file must exist before Compile)
 SetupIconFile=..\src\QuasarPad\Assets\QuasarPad.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
-PrivilegesRequired=lowest
+PrivilegesRequired=admin
 ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
