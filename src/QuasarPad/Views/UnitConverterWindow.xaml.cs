@@ -28,15 +28,18 @@ namespace QuasarPad.Views
             string cat = (CmbCategory.SelectedItem as ComboBoxItem)?.Content?.ToString() ?? "Temperature";
             string[] units = cat switch
             {
-                "Length" => new[] { "nm", "um", "mm", "cm", "m", "km", "in", "ft", "yd", "mi", "nmi" },
-                "Weight" => new[] { "mg", "g", "kg", "oz", "lb", "st", "t", "ct" },
-                "Data size" => new[] { "B", "KB", "MB", "GB", "TB", "PB" },
-                "Area" => new[] { "mm2", "cm2", "m2", "km2", "in2", "ft2", "yd2", "acre", "ha", "rai" },
-                "Volume" => new[] { "ml", "L", "m3", "tsp", "tbsp", "cup", "pt", "qt", "gal" },
-                "Speed" => new[] { "m/s", "km/h", "mph", "knot", "ft/s" },
-                "Angle" => new[] { "deg", "rad", "grad" },
-                "Time" => new[] { "ms", "s", "min", "h", "d", "wk" },
-                _ => new[] { "C", "F", "K" }
+                "Length" => new[] { "pm", "nm", "um", "mm", "cm", "dm", "m", "km", "in", "ft", "yd", "mi", "nmi", "au", "ly" },
+                "Weight" => new[] { "ug", "mg", "g", "kg", "t", "oz", "lb", "st", "ct", "gr", "slug" },
+                "Data size" => new[] { "bit", "B", "KB", "MB", "GB", "TB", "PB", "KiB", "MiB", "GiB" },
+                "Area" => new[] { "mm2", "cm2", "m2", "km2", "in2", "ft2", "yd2", "acre", "ha", "rai", "ngan", "wa2" },
+                "Volume" => new[] { "ml", "cl", "dl", "L", "m3", "tsp", "tbsp", "cup", "pt", "qt", "gal", "fl_oz", "in3", "ft3" },
+                "Speed" => new[] { "m/s", "km/h", "mph", "knot", "ft/s", "mach", "c" },
+                "Angle" => new[] { "deg", "rad", "grad", "arcmin", "arcsec" },
+                "Time" => new[] { "ns", "us", "ms", "s", "min", "h", "d", "wk", "mo", "yr" },
+                "Pressure" => new[] { "Pa", "kPa", "MPa", "bar", "atm", "psi", "mmHg", "Torr" },
+                "Energy" => new[] { "J", "kJ", "cal", "kcal", "Wh", "kWh", "eV", "BTU" },
+                "Power" => new[] { "W", "kW", "MW", "hp", "BTU/h" },
+                _ => new[] { "C", "F", "K", "R" }
             };
             foreach (var u in units)
             {
@@ -68,6 +71,9 @@ namespace QuasarPad.Views
                 "Speed" => _svc.ConvertSpeed(val, from, to),
                 "Angle" => _svc.ConvertAngle(val, from, to),
                 "Time" => _svc.ConvertTime(val, from, to),
+                "Pressure" => _svc.ConvertPressure(val, from, to),
+                "Energy" => _svc.ConvertEnergy(val, from, to),
+                "Power" => _svc.ConvertPower(val, from, to),
                 _ => _svc.TempFromC(_svc.TempToC(val, from), to)
             };
             TxtResult.Text = result.ToString("G12", CultureInfo.InvariantCulture);

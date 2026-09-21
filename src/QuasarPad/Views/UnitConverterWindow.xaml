@@ -1,11 +1,11 @@
 <Window x:Class="QuasarPad.Views.UnitConverterWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="Unit Converter - QuasarPad" Height="340" Width="500"
+        Title="Unit Converter - QuasarPad" Height="360" Width="520"
         WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
         Background="{DynamicResource WindowBackground}">
   <StackPanel Margin="16">
-    <TextBlock Text="Category" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBlock Text="Category (all offline)" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
     <ComboBox x:Name="CmbCategory" Height="28" Margin="0,0,0,10" SelectionChanged="Category_Changed">
       <ComboBoxItem Content="Temperature" IsSelected="True"/>
       <ComboBoxItem Content="Length"/>
@@ -16,6 +16,9 @@
       <ComboBoxItem Content="Speed"/>
       <ComboBoxItem Content="Angle"/>
       <ComboBoxItem Content="Time"/>
+      <ComboBoxItem Content="Pressure"/>
+      <ComboBoxItem Content="Energy"/>
+      <ComboBoxItem Content="Power"/>
     </ComboBox>
     <Grid Margin="0,0,0,10">
       <Grid.ColumnDefinitions>
