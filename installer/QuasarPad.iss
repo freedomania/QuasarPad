@@ -1,6 +1,7 @@
-; QuasarPad — Inno Setup script
-; 1. Publish Small build to ..\publish\Small
-; 2. Open this file in Inno Setup and Compile
+; QuasarPad — Inno Setup script (English UI)
+; 1. Put QuasarPad.ico in src\QuasarPad\Assets\ (optional but recommended)
+; 2. Publish Small build to ..\publish\Small
+; 3. Open this file in Inno Setup → Build → Compile
 
 #define MyAppName "QuasarPad"
 #define MyAppVersion "1.5.0"
@@ -20,7 +21,8 @@ DefaultGroupName={#MyAppName}
 DisableProgramGroupPage=yes
 OutputDir=..\publish\Installer
 OutputBaseFilename=QuasarPad-Setup-{#MyAppVersion}
-SetupIconFile=
+; Icon for the setup.exe and shortcuts (file must exist before Compile)
+SetupIconFile=..\src\QuasarPad\Assets\QuasarPad.ico
 Compression=lzma
 SolidCompression=yes
 WizardStyle=modern
@@ -34,7 +36,6 @@ Name: "english"; MessagesFile: "compiler:Default.isl"
 Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
-; Publish Small build first: publish\Small\*
 Source: "..\publish\Small\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
