@@ -12,6 +12,7 @@ namespace QuasarPad
         private int _tabSeq = 1;
         private bool _suppressTabSwitch;
         private bool _suppressTextChanged;
+        private int _lastTabIndex;
 
         private EditorTab? CurrentTab =>
             DocTabs.SelectedIndex >= 0 && DocTabs.SelectedIndex < _tabs.Count
@@ -22,7 +23,10 @@ namespace QuasarPad
         {
             AddTabInternal("Untitled", null, "");
             RefreshTabHeaders();
+            _suppressTabSwitch = true;
             DocTabs.SelectedIndex = 0;
+            _suppressTabSwitch = false;
+            _lastTabIndex = 0;
             LoadTabIntoEditor(0);
         }
 
@@ -35,8 +39,7 @@ namespace QuasarPad
                 Content = content ?? "",
                 IsModified = false
             });
-            var item = new TabItem { Header = title };
-            DocTabs.Items.Add(item);
+            DocTabs.Items.Add(new TabItem { Header = title });
         }
 
         private void RefreshTabHeaders()
@@ -50,9 +53,12 @@ namespace QuasarPad
 
         private void SaveEditorToCurrentTab()
         {
-            var tab = CurrentTab;
-            if (tab == null) return;
-            tab.Content = MainEditor.Text;
+            if (_lastTabIndex >= 0 && _lastTabIndex < _tabs.Count)
+            {
+                _tabs[_lastTabIndex].Content = MainEditor.Text;
+                _tabs[_lastTabIndex].IsModified = _isModified;
+                _tabs[_lastTabIndex].FilePath = _currentFilePath;
+            }
         }
 
         private void LoadTabIntoEditor(int index)
@@ -63,6 +69,7 @@ namespace QuasarPad
             _suppressTextChanged = false;
             _currentFilePath = _tabs[index].FilePath;
             _isModified = _tabs[index].IsModified;
+            _lastTabIndex = index;
             UpdateTitle();
             UpdateStatusBar();
         }
@@ -70,7 +77,7 @@ namespace QuasarPad
         private void NewTab_Click(object sender, RoutedEventArgs e)
         {
             SaveEditorToCurrentTab();
-            string title = _tabSeq == 1 ? "Untitled" : $"Untitled {_tabSeq}";
+            string title = _tabSeq <= 1 ? "Untitled" : $"Untitled {_tabSeq}";
             _tabSeq++;
             AddTabInternal(title, null, "");
             RefreshTabHeaders();
@@ -83,7 +90,9 @@ namespace QuasarPad
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
+            _suppressTextChanged = true;
             MainEditor.Text = "";
+            _suppressTextChanged = false;
             var tab = CurrentTab;
             if (tab != null)
             {
@@ -101,7 +110,6 @@ namespace QuasarPad
         {
             if (_tabs.Count <= 1)
             {
-                // last tab: just clear
                 Clear_Click(sender, e);
                 var t = CurrentTab;
                 if (t != null)
@@ -109,17 +117,22 @@ namespace QuasarPad
                     t.Title = "Untitled";
                     t.FilePath = null;
                     t.IsModified = false;
-                    _currentFilePath = null;
-                    _isModified = false;
-                    RefreshTabHeaders();
-                    UpdateTitle();
+                    t.Content = "";
                 }
+                _currentFilePath = null;
+                _isModified = false;
+                _suppressTextChanged = true;
+                MainEditor.Text = "";
+                _suppressTextChanged = false;
+                RefreshTabHeaders();
+                UpdateTitle();
                 return;
             }
 
             int idx = DocTabs.SelectedIndex;
             if (idx < 0) return;
 
+            SaveEditorToCurrentTab();
             var tab = _tabs[idx];
             if (tab.IsModified)
             {
@@ -128,9 +141,8 @@ namespace QuasarPad
                 if (r == MessageBoxResult.Cancel) return;
                 if (r == MessageBoxResult.Yes)
                 {
-                    SaveEditorToCurrentTab();
                     Save_Click(sender, e);
-                    if (CurrentTab?.IsModified == true) return;
+                    if (_tabs[idx].IsModified) return;
                 }
             }
 
@@ -145,58 +157,31 @@ namespace QuasarPad
 
         private void DocTabs_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
-            if (_suppressTabSwitch) return;
-            if (e.RemovedItems.Count > 0 && DocTabs.SelectedIndex >= 0)
-            {
-                // save previous - find old index roughly via content already in editor
-                // When selection changes, save current editor to the tab that was selected before
-            }
-            // Simpler: before switch, always save editor into whatever tab index was current
-            // SelectionChanged fires after change, so we need to save on switching using previous index
-        }
-
-        /// <summary>Call before changing selected tab index.</summary>
-        private void SwitchToTab(int newIndex)
-        {
-            if (newIndex < 0 || newIndex >= _tabs.Count) return;
-            SaveEditorToCurrentTab();
-            _suppressTabSwitch = true;
-            DocTabs.SelectedIndex = newIndex;
-            _suppressTabSwitch = false;
-            LoadTabIntoEditor(newIndex);
-        }
-
-        private void OnTabSelectionChanged()
-        {
-            // Used from SelectionChanged after user clicks a tab
-        }
-
-        internal void DocTabs_SelectionChanged_Handler(object sender, SelectionChangedEventArgs e)
-        {
             if (_suppressTabSwitch || _tabs.Count == 0) return;
+            if (DocTabs.SelectedIndex < 0) return;
 
-            // When user clicks another tab, editor still has OLD tab text until we load.
-            // We need previous index. Use: save to all tabs matching is hard.
-            // Approach: store _lastTabIndex
-        }
-
-        private int _lastTabIndex;
-
-        private void DocTabs_SelectionChanged_Impl(object sender, SelectionChangedEventArgs e)
-        {
-            if (_suppressTabSwitch || _tabs.Count == 0) return;
-
-            if (_lastTabIndex >= 0 && _lastTabIndex < _tabs.Count)
+            if (_lastTabIndex >= 0 && _lastTabIndex < _tabs.Count && _lastTabIndex != DocTabs.SelectedIndex)
             {
                 _tabs[_lastTabIndex].Content = MainEditor.Text;
+                _tabs[_lastTabIndex].IsModified = _isModified;
+                _tabs[_lastTabIndex].FilePath = _currentFilePath;
             }
 
-            int idx = DocTabs.SelectedIndex;
-            if (idx >= 0 && idx < _tabs.Count)
-            {
-                LoadTabIntoEditor(idx);
-                _lastTabIndex = idx;
-            }
+            LoadTabIntoEditor(DocTabs.SelectedIndex);
+        }
+
+        private void SyncTabAfterSave()
+        {
+            var tab = CurrentTab;
+            if (tab == null) return;
+            tab.Content = MainEditor.Text;
+            tab.IsModified = false;
+            tab.FilePath = _currentFilePath;
+            if (!string.IsNullOrEmpty(_currentFilePath))
+                tab.Title = Path.GetFileName(_currentFilePath);
+            _isModified = false;
+            RefreshTabHeaders();
+            UpdateTitle();
         }
     }
 }
