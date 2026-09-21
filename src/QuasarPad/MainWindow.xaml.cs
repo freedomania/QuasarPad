@@ -43,6 +43,7 @@ namespace QuasarPad
         public MainWindow()
         {
             InitializeComponent();
+            InitTabs();
             MainEditor.TextArea.Caret.PositionChanged += (s, e) => UpdateStatusBar();
             LoadSettings();
             UpdateTitle();
@@ -52,7 +53,12 @@ namespace QuasarPad
         private string EditorText
         {
             get => MainEditor.Text;
-            set => MainEditor.Text = value;
+            set
+            {
+                _suppressTextChanged = true;
+                MainEditor.Text = value;
+                _suppressTextChanged = false;
+            }
         }
 
         private void LoadSettings()
@@ -145,7 +151,7 @@ namespace QuasarPad
 
         private void UpdateTitle()
         {
-            string name = _currentFilePath != null ? Path.GetFileName(_currentFilePath) : "Untitled";
+            string name = _currentFilePath != null ? Path.GetFileName(_currentFilePath) : (CurrentTab?.Title ?? "Untitled");
             Title = $"{(_isModified ? "*" : "")}{name} - QuasarPad";
         }
 
@@ -159,47 +165,46 @@ namespace QuasarPad
             catch { StatusLineCol.Text = "Ln 1, Col 1"; }
             StatusEncoding.Text = _currentEncoding.WebName.ToUpperInvariant();
             StatusMode.Text = _isPureMode ? "Pure Mode" : "Smart Mode";
-            StatusCharCount.Text = $"{EditorText.Length:N0} characters";
+            StatusCharCount.Text = $"{MainEditor.Text.Length:N0} characters";
         }
 
         private void MainEditor_TextChanged(object? sender, EventArgs e)
         {
+            if (_suppressTextChanged) return;
             if (!_isModified) { _isModified = true; UpdateTitle(); }
-            UpdateStatusBar();
-        }
-
-        private void New_Click(object sender, RoutedEventArgs e)
-        {
-            if (!ConfirmSaveIfNeeded()) return;
-            EditorText = "";
-            _currentFilePath = null;
-            _isModified = false;
-            UpdateTitle();
+            if (CurrentTab != null)
+            {
+                CurrentTab.IsModified = true;
+                CurrentTab.Content = MainEditor.Text;
+            }
+            RefreshTabHeaders();
             UpdateStatusBar();
         }
 
         private void Open_Click(object sender, RoutedEventArgs e)
         {
-            if (!ConfirmSaveIfNeeded()) return;
             var dialog = new OpenFileDialog
             {
                 Filter = "All Files (*.*)|*.*|Text (*.txt)|*.txt|Markdown (*.md)|*.md|JSON (*.json)|*.json|HTML (*.html)|*.html",
                 Title = "Open - QuasarPad"
             };
-            if (dialog.ShowDialog() == true)
+            if (dialog.ShowDialog() != true) return;
+            try
             {
-                try
-                {
-                    EditorText = File.ReadAllText(dialog.FileName, Encoding.UTF8);
-                    _currentFilePath = dialog.FileName;
-                    _isModified = false;
-                    UpdateTitle();
-                    UpdateStatusBar();
-                }
-                catch (Exception ex)
-                {
-                    MessageBox.Show($"Cannot open:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
-                }
+                string text = File.ReadAllText(dialog.FileName, Encoding.UTF8);
+                // Open in a new tab
+                SaveEditorToCurrentTab();
+                string title = Path.GetFileName(dialog.FileName);
+                AddTabInternal(title, dialog.FileName, text);
+                RefreshTabHeaders();
+                _suppressTabSwitch = true;
+                DocTabs.SelectedIndex = _tabs.Count - 1;
+                _suppressTabSwitch = false;
+                LoadTabIntoEditor(DocTabs.SelectedIndex);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Cannot open:\n{ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -224,10 +229,10 @@ namespace QuasarPad
         {
             try
             {
-                File.WriteAllText(path, EditorText, _currentEncoding);
+                File.WriteAllText(path, MainEditor.Text, _currentEncoding);
                 _currentFilePath = path;
                 _isModified = false;
-                UpdateTitle();
+                SyncTabAfterSave();
             }
             catch (Exception ex)
             {
@@ -252,6 +257,12 @@ namespace QuasarPad
 
         protected override void OnClosing(System.ComponentModel.CancelEventArgs e)
         {
+            SaveEditorToCurrentTab();
+            foreach (var tab in _tabs)
+            {
+                if (!tab.IsModified) continue;
+                // switch and ask
+            }
             if (!ConfirmSaveIfNeeded()) { e.Cancel = true; return; }
             SaveSettings();
             base.OnClosing(e);
@@ -277,8 +288,8 @@ namespace QuasarPad
                 string q = tb.Text;
                 if (string.IsNullOrEmpty(q)) return;
                 int start = MainEditor.SelectionStart + MainEditor.SelectionLength;
-                int idx = EditorText.IndexOf(q, start, StringComparison.OrdinalIgnoreCase);
-                if (idx < 0) idx = EditorText.IndexOf(q, 0, StringComparison.OrdinalIgnoreCase);
+                int idx = MainEditor.Text.IndexOf(q, start, StringComparison.OrdinalIgnoreCase);
+                if (idx < 0) idx = MainEditor.Text.IndexOf(q, 0, StringComparison.OrdinalIgnoreCase);
                 if (idx >= 0) { MainEditor.Select(idx, q.Length); MainEditor.TextArea.Focus(); }
                 else MessageBox.Show("Not found.", "Find");
             };
@@ -305,7 +316,7 @@ namespace QuasarPad
                 string r = repBox.Text ?? "";
                 int count = 0, i = 0;
                 var sb = new StringBuilder();
-                string text = EditorText;
+                string text = MainEditor.Text;
                 while (true)
                 {
                     int f = text.IndexOf(q, i, StringComparison.OrdinalIgnoreCase);
@@ -347,7 +358,7 @@ namespace QuasarPad
         {
             try
             {
-                var doc = System.Text.Json.JsonDocument.Parse(EditorText);
+                var doc = System.Text.Json.JsonDocument.Parse(MainEditor.Text);
                 EditorText = System.Text.Json.JsonSerializer.Serialize(doc, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
                 _isModified = true; UpdateTitle();
             }
@@ -356,25 +367,25 @@ namespace QuasarPad
 
         private void YamlFormat_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _extraTools.FormatYamlLike(EditorText);
+            EditorText = _extraTools.FormatYamlLike(MainEditor.Text);
             _isModified = true; UpdateTitle();
         }
 
         private void FormatText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.FormatPlainText(EditorText);
+            EditorText = _textFormatService.FormatPlainText(MainEditor.Text);
             _isModified = true; UpdateTitle();
         }
 
         private void ReflowText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.ReflowParagraphs(EditorText, 80);
+            EditorText = _textFormatService.ReflowParagraphs(MainEditor.Text, 80);
             _isModified = true; UpdateTitle();
         }
 
         private void Slug_Click(object sender, RoutedEventArgs e)
         {
-            string source = !string.IsNullOrEmpty(MainEditor.SelectedText) ? MainEditor.SelectedText : EditorText;
+            string source = !string.IsNullOrEmpty(MainEditor.SelectedText) ? MainEditor.SelectedText : MainEditor.Text;
             string slug = _extraTools.ToSlug(source);
             if (MainEditor.SelectionLength > 0)
                 MainEditor.Document.Replace(MainEditor.SelectionStart, MainEditor.SelectionLength, slug);
@@ -392,7 +403,7 @@ namespace QuasarPad
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.4\n\nOffline Text & Markup Toolkit\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
+                "QuasarPad v1.5\n\nClear + multi-tab\nOffline Text & Markup Toolkit\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
 
         private void OpenGitHub_Click(object sender, RoutedEventArgs e)
