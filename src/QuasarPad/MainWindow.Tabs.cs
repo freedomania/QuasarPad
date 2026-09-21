@@ -2,6 +2,8 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
 using QuasarPad.Models;
 
 namespace QuasarPad
@@ -32,6 +34,7 @@ namespace QuasarPad
 
         private void AddTabInternal(string title, string? path, string content)
         {
+            int index = _tabs.Count;
             _tabs.Add(new EditorTab
             {
                 Title = title,
@@ -39,16 +42,72 @@ namespace QuasarPad
                 Content = content ?? "",
                 IsModified = false
             });
-            DocTabs.Items.Add(new TabItem { Header = title });
+            DocTabs.Items.Add(new TabItem { Header = CreateTabHeader(title, index) });
+        }
+
+        private FrameworkElement CreateTabHeader(string title, int tabIndex)
+        {
+            var panel = new StackPanel
+            {
+                Orientation = Orientation.Horizontal,
+                VerticalAlignment = VerticalAlignment.Center
+            };
+
+            var label = new TextBlock
+            {
+                Text = title,
+                VerticalAlignment = VerticalAlignment.Center,
+                Margin = new Thickness(0, 0, 6, 0)
+            };
+
+            var closeBtn = new Button
+            {
+                Content = "×",
+                Width = 18,
+                Height = 18,
+                FontSize = 12,
+                Padding = new Thickness(0),
+                Margin = new Thickness(0),
+                ToolTip = "Close tab",
+                Cursor = Cursors.Hand,
+                Background = Brushes.Transparent,
+                BorderThickness = new Thickness(0),
+                Tag = tabIndex
+            };
+            closeBtn.Click += TabCloseButton_Click;
+
+            panel.Children.Add(label);
+            panel.Children.Add(closeBtn);
+            return panel;
         }
 
         private void RefreshTabHeaders()
         {
             for (int i = 0; i < _tabs.Count && i < DocTabs.Items.Count; i++)
             {
-                if (DocTabs.Items[i] is TabItem ti)
-                    ti.Header = _tabs[i].DisplayTitle;
+                if (DocTabs.Items[i] is not TabItem ti) continue;
+
+                if (ti.Header is StackPanel sp && sp.Children.Count >= 2)
+                {
+                    if (sp.Children[0] is TextBlock label)
+                        label.Text = _tabs[i].DisplayTitle;
+                    if (sp.Children[1] is Button btn)
+                        btn.Tag = i; // keep index in sync after close/reorder
+                }
+                else
+                {
+                    ti.Header = CreateTabHeader(_tabs[i].DisplayTitle, i);
+                }
             }
+        }
+
+        private void TabCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            e.Handled = true;
+            if (sender is not Button btn) return;
+            int idx = btn.Tag is int i ? i : -1;
+            if (idx < 0 || idx >= _tabs.Count) return;
+            CloseTabAt(idx);
         }
 
         private void SaveEditorToCurrentTab()
@@ -108,17 +167,47 @@ namespace QuasarPad
 
         private void CloseTab_Click(object sender, RoutedEventArgs e)
         {
+            int idx = DocTabs.SelectedIndex;
+            if (idx >= 0) CloseTabAt(idx);
+        }
+
+        private void CloseTabAt(int idx)
+        {
+            if (idx < 0 || idx >= _tabs.Count) return;
+
+            // If closing the active tab, save editor first
+            if (idx == DocTabs.SelectedIndex || idx == _lastTabIndex)
+                SaveEditorToCurrentTab();
+
+            var tab = _tabs[idx];
+            if (tab.IsModified)
+            {
+                // Select that tab so user sees it while asking
+                if (DocTabs.SelectedIndex != idx)
+                {
+                    _suppressTabSwitch = true;
+                    DocTabs.SelectedIndex = idx;
+                    _suppressTabSwitch = false;
+                    LoadTabIntoEditor(idx);
+                }
+
+                var r = MessageBox.Show("Save changes before closing tab?", "Close Tab",
+                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
+                if (r == MessageBoxResult.Cancel) return;
+                if (r == MessageBoxResult.Yes)
+                {
+                    Save_Click(this, new RoutedEventArgs());
+                    if (_tabs[idx].IsModified) return;
+                }
+            }
+
             if (_tabs.Count <= 1)
             {
-                Clear_Click(sender, e);
-                var t = CurrentTab;
-                if (t != null)
-                {
-                    t.Title = "Untitled";
-                    t.FilePath = null;
-                    t.IsModified = false;
-                    t.Content = "";
-                }
+                // Reset last remaining tab
+                _tabs[0].Title = "Untitled";
+                _tabs[0].FilePath = null;
+                _tabs[0].Content = "";
+                _tabs[0].IsModified = false;
                 _currentFilePath = null;
                 _isModified = false;
                 _suppressTextChanged = true;
@@ -126,28 +215,14 @@ namespace QuasarPad
                 _suppressTextChanged = false;
                 RefreshTabHeaders();
                 UpdateTitle();
+                UpdateStatusBar();
                 return;
-            }
-
-            int idx = DocTabs.SelectedIndex;
-            if (idx < 0) return;
-
-            SaveEditorToCurrentTab();
-            var tab = _tabs[idx];
-            if (tab.IsModified)
-            {
-                var r = MessageBox.Show("Save changes before closing tab?", "Close Tab",
-                    MessageBoxButton.YesNoCancel, MessageBoxImage.Question);
-                if (r == MessageBoxResult.Cancel) return;
-                if (r == MessageBoxResult.Yes)
-                {
-                    Save_Click(sender, e);
-                    if (_tabs[idx].IsModified) return;
-                }
             }
 
             _tabs.RemoveAt(idx);
             DocTabs.Items.RemoveAt(idx);
+            RefreshTabHeaders(); // re-index close button Tags
+
             int newIdx = Math.Min(idx, _tabs.Count - 1);
             _suppressTabSwitch = true;
             DocTabs.SelectedIndex = newIdx;
