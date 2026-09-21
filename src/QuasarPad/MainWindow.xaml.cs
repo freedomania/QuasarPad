@@ -343,29 +343,14 @@ namespace QuasarPad
             ApplyTheme();
         }
 
-        private void MarkdownToHtml_Click(object sender, RoutedEventArgs e) =>
-            new MarkdownConverterWindow(EditorText) { Owner = this }.Show();
-
-        private void HtmlTest_Click(object sender, RoutedEventArgs e) =>
-            new HtmlTestWindow(EditorText) { Owner = this }.Show();
-
-        private void TextTools_Click(object sender, RoutedEventArgs e) =>
-            new TextToolsWindow(EditorText) { Owner = this }.Show();
-
-        private void RegexTester_Click(object sender, RoutedEventArgs e) =>
-            new RegexTesterWindow(EditorText) { Owner = this }.Show();
-
-        private void Diff_Click(object sender, RoutedEventArgs e) =>
-            new DiffWindow(EditorText) { Owner = this }.Show();
-
-        private void Timestamp_Click(object sender, RoutedEventArgs e) =>
-            new TimestampWindow { Owner = this }.Show();
+        // Tool windows that accept text seed are in MainWindow.Tools.cs (clipboard-aware)
 
         private void JsonFormat_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                var doc = System.Text.Json.JsonDocument.Parse(EditorText);
+                string src = GetToolSeedText();
+                var doc = System.Text.Json.JsonDocument.Parse(src);
                 EditorText = System.Text.Json.JsonSerializer.Serialize(doc, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
                 _isModified = true; UpdateTitle();
             }
@@ -374,36 +359,27 @@ namespace QuasarPad
 
         private void YamlFormat_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _extraTools.FormatYamlLike(EditorText);
+            EditorText = _extraTools.FormatYamlLike(GetToolSeedText());
             _isModified = true; UpdateTitle();
         }
 
         private void FormatText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.FormatPlainText(EditorText);
+            EditorText = _textFormatService.FormatPlainText(GetToolSeedText());
             _isModified = true; UpdateTitle();
         }
 
         private void ReflowText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.ReflowParagraphs(EditorText, 80);
+            EditorText = _textFormatService.ReflowParagraphs(GetToolSeedText(), 80);
             _isModified = true; UpdateTitle();
         }
 
         private void Slug_Click(object sender, RoutedEventArgs e)
         {
-            string source = MainEditor.SelectedText;
-            if (string.IsNullOrWhiteSpace(source)) source = EditorText;
+            string source = GetToolSeedText();
             string slug = _extraTools.ToSlug(source);
-            if (MainEditor.SelectionLength > 0)
-            {
-                int start = MainEditor.SelectionStart;
-                MainEditor.Document.Replace(start, MainEditor.SelectionLength, slug);
-            }
-            else
-            {
-                EditorText = slug;
-            }
+            EditorText = slug;
             _isModified = true; UpdateTitle();
             MessageBox.Show($"Slug:\n{slug}", "Make Slug");
         }
@@ -416,12 +392,7 @@ namespace QuasarPad
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.3.0\n\n" +
-                "Offline Text & Markup Toolkit\n" +
-                "• Markdown → HTML, HTML Test\n" +
-                "• Text Tools, Regex Tester, Diff\n" +
-                "• Timestamp, Slug, JSON/YAML\n\n" +
-                "MIT License\nhttps://github.com/freedomania/QuasarPad",
+                "QuasarPad v1.4\n\nOffline Text & Markup Toolkit\nTools auto-fill from clipboard when available.\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
 
         private void OpenGitHub_Click(object sender, RoutedEventArgs e)
