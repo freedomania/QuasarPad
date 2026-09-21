@@ -1,0 +1,24 @@
+<Window x:Class="QuasarPad.Views.TimestampWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Timestamp Tools - QuasarPad" Height="360" Width="520"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackground}">
+  <StackPanel Margin="16">
+    <TextBlock Text="Unix timestamp" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBox x:Name="UnixBox" Height="28" Margin="0,0,0,8" FontFamily="Consolas"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    <TextBlock Text="Date / time" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBox x:Name="DateBox" Height="28" Margin="0,0,0,12" FontFamily="Consolas"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    <WrapPanel>
+      <Button Content="Unix → Local" Margin="0,0,8,8" Padding="10,4" Click="UnixToLocal_Click"/>
+      <Button Content="Local → Unix" Margin="0,0,8,8" Padding="10,4" Click="LocalToUnix_Click"/>
+      <Button Content="Now (Unix)" Margin="0,0,8,8" Padding="10,4" Click="NowUnix_Click"/>
+      <Button Content="Now (ISO)" Margin="0,0,8,8" Padding="10,4" Click="NowIso_Click"/>
+    </WrapPanel>
+    <TextBlock Text="Result" Foreground="{DynamicResource EditorForeground}" Margin="0,8,0,4"/>
+    <TextBox x:Name="ResultBox" Height="60" TextWrapping="Wrap" IsReadOnly="True" FontFamily="Consolas"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+  </StackPanel>
+</Window>
