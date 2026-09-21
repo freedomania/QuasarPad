@@ -1,37 +1,41 @@
-; Inno Setup Script for QuasarPad
-; Requires Inno Setup 6+ (https://jrsoftware.org/isinfo.php)
+; QuasarPad — Inno Setup script
+; 1. Publish Small build to ..\publish\Small
+; 2. Open this file in Inno Setup and Compile
 
 #define MyAppName "QuasarPad"
-#define MyAppVersion "1.0.0"
+#define MyAppVersion "1.5.0"
 #define MyAppPublisher "QuasarPad"
 #define MyAppURL "https://github.com/freedomania/QuasarPad"
 #define MyAppExeName "QuasarPad.exe"
 
 [Setup]
-AppId={{A1B2C3D4-E5F6-7890-ABCD-EF1234567890}
+AppId={{A7B3C9D1-4E5F-6789-ABCD-EF0123456789}
 AppName={#MyAppName}
 AppVersion={#MyAppVersion}
 AppPublisher={#MyAppPublisher}
 AppPublisherURL={#MyAppURL}
-DefaultDirName={autopf}\{#MyAppName}
+AppSupportURL={#MyAppURL}
+DefaultDirName=C:\QuasarPad
 DefaultGroupName={#MyAppName}
-OutputDir=../publish/Installer
+DisableProgramGroupPage=yes
+OutputDir=..\publish\Installer
 OutputBaseFilename=QuasarPad-Setup-{#MyAppVersion}
-Compression=lzma2
+SetupIconFile=
+Compression=lzma
 SolidCompression=yes
+WizardStyle=modern
 PrivilegesRequired=lowest
-ArchitecturesAllowed=x64
-ArchitecturesInstallIn64BitMode=x64
-UninstallDisplayIcon={app}\{#MyAppExeName}
+ArchitecturesInstallIn64BitMode=x64compatible
 
 [Languages]
 Name: "english"; MessagesFile: "compiler:Default.isl"
 
 [Tasks]
-Name: "desktopicon"; Description: "Create a &desktop shortcut"; GroupDescription: "Additional icons:"; Flags: checked
+Name: "desktopicon"; Description: "Create a desktop shortcut"; GroupDescription: "Additional icons:"; Flags: unchecked
 
 [Files]
-Source: "..\publish\Portable\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs
+; Publish Small build first: publish\Small\*
+Source: "..\publish\Small\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{group}\{#MyAppName}"; Filename: "{app}\{#MyAppExeName}"
