@@ -1,44 +1,40 @@
 # QuasarPad
 
-**Offline Text & Markup Toolkit** for Windows 10/11.
+**Offline Text & Markup Toolkit** for Windows 10/11 (64-bit).
 
-Notepad-style editor + converters + utilities — **no telemetry, offline-first, MIT License**.
+A lightweight editor with built-in converters and utilities — **no telemetry**, offline-first, **MIT License**.
 
-> Looking for testers! Please download, try features, and [open an issue](https://github.com/freedomania/QuasarPad/issues) if something breaks.
+<p align="center">
+  <img src="assets/logo.svg" width="120" alt="QuasarPad logo"/>
+</p>
+
+> **Testers welcome.** Clone or download a Release, try the tools, and open an Issue if something breaks.
+
+## Why QuasarPad?
+
+| | Windows Notepad | QuasarPad |
+|--|-----------------|-----------|
+| Tabs | Limited / different UX | Multi-tab with close (×) |
+| Clear text | Manual select-delete | One-click **Clear** |
+| Markdown → HTML | No | Live preview + clean full HTML |
+| Units / color / bases | No | Offline converters |
+| Telemetry | OS-integrated | None |
+
+Not competing with Notepad++ plugin ecosystem — focused on **offline utilities** next to a clean editor.
 
 ## Features (v1.5)
 
-### Editor
-- Multi-tab (close with × on each tab)
-- Clear button (empty current tab fast)
-- Line numbers, word wrap, status bar
-- Pure Mode / Dark Mode
-- Find & Replace
-- Right-click Cut / Copy / Paste
-
-### Markup & text
-- Markdown → HTML (live preview, clean full HTML document)
-- HTML Test (edit + offline preview)
-- Text Tools (Base64, URL, hash, case…)
-- Regex Tester, Diff, Timestamp tools
-- JSON format, YAML clean, slug, sort / unique lines
-
-### Converters (offline constants only)
-- Unit Converter (temp, length, weight, data, area, volume, speed, angle, time, pressure, energy, power)
-- Number base (bin/oct/dec/hex)
-- Color Tools (large offline palette → HEX / RGB + copy)
-- Generators (UUID, password)
+- Multi-tab editor, Clear, Find/Replace, Dark / Pure mode
+- Markdown → HTML, HTML Test, Text Tools, Regex, Diff, Timestamps
+- Unit converter, number bases, color palette, UUID & password generators
+- JSON / YAML helpers, sort & unique lines
 
 ## Requirements
 
-| Build | Needs |
-|--------|--------|
-| **Small** (recommended) | [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) |
-| **PortableFull** | Nothing extra (larger exe) |
+- Windows 10/11 **64-bit**
+- [.NET 8 Desktop Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) (for the recommended Small build)
 
-## Download / test builds
-
-Until formal Releases are published, build from source:
+## Build
 
 ```powershell
 git clone https://github.com/freedomania/QuasarPad.git
@@ -46,23 +42,20 @@ cd QuasarPad
 dotnet publish src\QuasarPad\QuasarPad.csproj -c Release -r win-x64 --self-contained false -p:PublishSingleFile=true -o publish\Small
 ```
 
-Run: `publish\Small\QuasarPad.exe`
+## Installer (Inno Setup)
 
-### Installer (optional)
+You only need Inno Setup on the **developer** PC to *create* the setup.exe. End users just run the setup.
 
-1. Build the Small publish folder (above).
-2. Install [Inno Setup](https://jrsoftware.org/isinfo.php).
-3. Open `installer\QuasarPad.iss` and compile.
+1. Publish to `publish\Small` (command above).
+2. Install [Inno Setup 6](https://jrsoftware.org/isinfo.php).
+3. Open `installer\QuasarPad.iss` → **Build → Compile**.
+4. Output: `publish\Installer\QuasarPad-Setup-1.5.0.exe`
 
-The installer creates a Start Menu entry and optional desktop shortcut under `C:\QuasarPad\` (not System32).
+Default install path: `C:\QuasarPad` (desktop shortcut optional).
 
-## Support the project
+## Support
 
-QuasarPad is **free for everyone**. See [SUPPORT.md](SUPPORT.md) for:
-
-- How to help (star, issues, PRs)
-- Optional donations
-- Supporter idea (no paywall on core tools)
+Free for everyone. Optional donations and how to help: [SUPPORT.md](SUPPORT.md)
 
 ## License
 
