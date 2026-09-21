@@ -1,0 +1,36 @@
+<Window x:Class="QuasarPad.Views.GeneratorsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Generators - QuasarPad" Height="360" Width="480"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackground}">
+  <StackPanel Margin="16">
+    <TextBlock Text="UUID / GUID" FontWeight="SemiBold" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,6"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+      <Button Content="New UUID" Padding="10,4" Margin="0,0,8,0" Click="NewUuid_Click"/>
+      <Button Content="UUID no dashes" Padding="10,4" Margin="0,0,8,0" Click="NewUuidN_Click"/>
+      <Button Content="Copy" Padding="10,4" Click="CopyOut_Click"/>
+    </StackPanel>
+    <TextBox x:Name="TxtUuid" Height="28" FontFamily="Consolas" Margin="0,0,0,16" IsReadOnly="True"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+
+    <TextBlock Text="Password" FontWeight="SemiBold" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,6"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+      <TextBlock Text="Length" VerticalAlignment="Center" Foreground="{DynamicResource EditorForeground}" Margin="0,0,8,0"/>
+      <TextBox x:Name="TxtLen" Width="50" Height="28" Text="16" FontFamily="Consolas"
+               Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    </StackPanel>
+    <WrapPanel Margin="0,0,0,8">
+      <CheckBox x:Name="ChkUpper" Content="A-Z" IsChecked="True" Margin="0,0,12,4" Foreground="{DynamicResource EditorForeground}"/>
+      <CheckBox x:Name="ChkLower" Content="a-z" IsChecked="True" Margin="0,0,12,4" Foreground="{DynamicResource EditorForeground}"/>
+      <CheckBox x:Name="ChkDigit" Content="0-9" IsChecked="True" Margin="0,0,12,4" Foreground="{DynamicResource EditorForeground}"/>
+      <CheckBox x:Name="ChkSymbol" Content="Symbols" IsChecked="True" Margin="0,0,12,4" Foreground="{DynamicResource EditorForeground}"/>
+    </WrapPanel>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+      <Button Content="Generate" Padding="10,4" Margin="0,0,8,0" Click="GenPass_Click"/>
+      <Button Content="Copy" Padding="10,4" Click="CopyPass_Click"/>
+    </StackPanel>
+    <TextBox x:Name="TxtPass" Height="28" FontFamily="Consolas" IsReadOnly="True"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+  </StackPanel>
+</Window>

@@ -1,0 +1,27 @@
+<Window x:Class="QuasarPad.Views.ColorToolsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Color Tools - QuasarPad" Height="300" Width="420"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackground}">
+  <StackPanel Margin="16">
+    <TextBlock Text="HEX" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBox x:Name="TxtHex" Height="28" FontFamily="Consolas" Text="#007ACC" Margin="0,0,0,8"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    <TextBlock Text="RGB (0-255)" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+      <TextBox x:Name="TxtR" Width="70" Height="28" Margin="0,0,8,0" FontFamily="Consolas"
+               Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+      <TextBox x:Name="TxtG" Width="70" Height="28" Margin="0,0,8,0" FontFamily="Consolas"
+               Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+      <TextBox x:Name="TxtB" Width="70" Height="28" FontFamily="Consolas"
+               Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    </StackPanel>
+    <Border x:Name="Preview" Height="40" Margin="0,0,0,10" BorderThickness="1" BorderBrush="Gray"/>
+    <StackPanel Orientation="Horizontal">
+      <Button Content="HEX → RGB" Padding="10,6" Margin="0,0,8,0" Click="HexToRgb_Click"/>
+      <Button Content="RGB → HEX" Padding="10,6" Margin="0,0,8,0" Click="RgbToHex_Click"/>
+      <Button Content="Copy HEX" Padding="10,6" Click="Copy_Click"/>
+    </StackPanel>
+  </StackPanel>
+</Window>

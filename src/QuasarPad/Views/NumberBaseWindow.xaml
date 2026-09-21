@@ -1,0 +1,44 @@
+<Window x:Class="QuasarPad.Views.NumberBaseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Number Base - QuasarPad" Height="280" Width="440"
+        WindowStartupLocation="CenterOwner" ResizeMode="NoResize"
+        Background="{DynamicResource WindowBackground}">
+  <StackPanel Margin="16">
+    <TextBlock Text="Input" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBox x:Name="TxtInput" Height="28" FontFamily="Consolas" Margin="0,0,0,8"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    <Grid Margin="0,0,0,10">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="12"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <StackPanel Grid.Column="0">
+        <TextBlock Text="From base" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+        <ComboBox x:Name="CmbFrom" Height="28">
+          <ComboBoxItem Content="2 (Binary)" Tag="2" IsSelected="True"/>
+          <ComboBoxItem Content="8 (Octal)" Tag="8"/>
+          <ComboBoxItem Content="10 (Decimal)" Tag="10"/>
+          <ComboBoxItem Content="16 (Hex)" Tag="16"/>
+        </ComboBox>
+      </StackPanel>
+      <StackPanel Grid.Column="2">
+        <TextBlock Text="To base" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+        <ComboBox x:Name="CmbTo" Height="28">
+          <ComboBoxItem Content="2 (Binary)" Tag="2"/>
+          <ComboBoxItem Content="8 (Octal)" Tag="8"/>
+          <ComboBoxItem Content="10 (Decimal)" Tag="10" IsSelected="True"/>
+          <ComboBoxItem Content="16 (Hex)" Tag="16"/>
+        </ComboBox>
+      </StackPanel>
+    </Grid>
+    <TextBlock Text="Result" Foreground="{DynamicResource EditorForeground}" Margin="0,0,0,4"/>
+    <TextBox x:Name="TxtResult" Height="28" FontFamily="Consolas" IsReadOnly="True" Margin="0,0,0,10"
+             Background="{DynamicResource EditorBackground}" Foreground="{DynamicResource EditorForeground}"/>
+    <StackPanel Orientation="Horizontal">
+      <Button Content="Convert" Padding="14,6" Margin="0,0,8,0" Click="Convert_Click"/>
+      <Button Content="Copy" Padding="14,6" Click="Copy_Click"/>
+    </StackPanel>
+  </StackPanel>
+</Window>
