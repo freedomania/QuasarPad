@@ -343,14 +343,11 @@ namespace QuasarPad
             ApplyTheme();
         }
 
-        // Tool windows that accept text seed are in MainWindow.Tools.cs (clipboard-aware)
-
         private void JsonFormat_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                string src = GetToolSeedText();
-                var doc = System.Text.Json.JsonDocument.Parse(src);
+                var doc = System.Text.Json.JsonDocument.Parse(EditorText);
                 EditorText = System.Text.Json.JsonSerializer.Serialize(doc, new System.Text.Json.JsonSerializerOptions { WriteIndented = true });
                 _isModified = true; UpdateTitle();
             }
@@ -359,27 +356,30 @@ namespace QuasarPad
 
         private void YamlFormat_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _extraTools.FormatYamlLike(GetToolSeedText());
+            EditorText = _extraTools.FormatYamlLike(EditorText);
             _isModified = true; UpdateTitle();
         }
 
         private void FormatText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.FormatPlainText(GetToolSeedText());
+            EditorText = _textFormatService.FormatPlainText(EditorText);
             _isModified = true; UpdateTitle();
         }
 
         private void ReflowText_Click(object sender, RoutedEventArgs e)
         {
-            EditorText = _textFormatService.ReflowParagraphs(GetToolSeedText(), 80);
+            EditorText = _textFormatService.ReflowParagraphs(EditorText, 80);
             _isModified = true; UpdateTitle();
         }
 
         private void Slug_Click(object sender, RoutedEventArgs e)
         {
-            string source = GetToolSeedText();
+            string source = !string.IsNullOrEmpty(MainEditor.SelectedText) ? MainEditor.SelectedText : EditorText;
             string slug = _extraTools.ToSlug(source);
-            EditorText = slug;
+            if (MainEditor.SelectionLength > 0)
+                MainEditor.Document.Replace(MainEditor.SelectionStart, MainEditor.SelectionLength, slug);
+            else
+                EditorText = slug;
             _isModified = true; UpdateTitle();
             MessageBox.Show($"Slug:\n{slug}", "Make Slug");
         }
@@ -392,7 +392,7 @@ namespace QuasarPad
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.4\n\nOffline Text & Markup Toolkit\nTools auto-fill from clipboard when available.\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
+                "QuasarPad v1.4\n\nOffline Text & Markup Toolkit\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
 
         private void OpenGitHub_Click(object sender, RoutedEventArgs e)
