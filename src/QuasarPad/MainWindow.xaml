@@ -13,10 +13,13 @@
              Background="{DynamicResource MenuBackground}"
              Foreground="{DynamicResource MenuForeground}">
             <MenuItem Header="_File">
-                <MenuItem Header="_New" InputGestureText="Ctrl+N" Click="New_Click"/>
+                <MenuItem Header="_New Tab" InputGestureText="Ctrl+N" Click="NewTab_Click"/>
                 <MenuItem Header="_Open..." InputGestureText="Ctrl+O" Click="Open_Click"/>
                 <MenuItem Header="_Save" InputGestureText="Ctrl+S" Click="Save_Click"/>
                 <MenuItem Header="Save _As..." InputGestureText="Ctrl+Shift+S" Click="SaveAs_Click"/>
+                <Separator/>
+                <MenuItem Header="_Clear" InputGestureText="Ctrl+Shift+L" Click="Clear_Click"/>
+                <MenuItem Header="Close _Tab" InputGestureText="Ctrl+W" Click="CloseTab_Click"/>
                 <Separator/>
                 <MenuItem Header="E_xit" InputGestureText="Alt+F4" Click="Exit_Click"/>
             </MenuItem>
@@ -28,6 +31,7 @@
                 <MenuItem Header="_Copy" InputGestureText="Ctrl+C" Click="Copy_Click"/>
                 <MenuItem Header="_Paste" InputGestureText="Ctrl+V" Click="Paste_Click"/>
                 <MenuItem Header="Select _All" InputGestureText="Ctrl+A" Click="SelectAll_Click"/>
+                <MenuItem Header="Clea_r" Click="Clear_Click"/>
                 <Separator/>
                 <MenuItem Header="_Find..." InputGestureText="Ctrl+F" Click="Find_Click"/>
                 <MenuItem Header="_Replace..." InputGestureText="Ctrl+H" Click="Replace_Click"/>
@@ -74,15 +78,26 @@
             </MenuItem>
         </Menu>
 
+        <!-- Quick buttons -->
+        <ToolBar DockPanel.Dock="Top" Background="{DynamicResource MenuBackground}">
+            <Button Content="New Tab" Padding="8,3" Margin="2,0" Click="NewTab_Click" ToolTip="Ctrl+N"/>
+            <Button Content="Clear" Padding="8,3" Margin="2,0" Click="Clear_Click" ToolTip="Clear current tab text"/>
+            <Button Content="Close Tab" Padding="8,3" Margin="2,0" Click="CloseTab_Click" ToolTip="Ctrl+W"/>
+        </ToolBar>
+
         <Grid>
             <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
 
+            <TabControl x:Name="DocTabs" Grid.Row="0" SelectionChanged="DocTabs_SelectionChanged"
+                        Background="{DynamicResource MenuBackground}"/>
+
             <avalonedit:TextEditor
                 x:Name="MainEditor"
-                Grid.Row="0"
+                Grid.Row="1"
                 FontFamily="Consolas"
                 FontSize="14"
                 ShowLineNumbers="True"
@@ -99,12 +114,13 @@
                         <MenuItem Header="Copy" InputGestureText="Ctrl+C" Click="Copy_Click"/>
                         <MenuItem Header="Paste" InputGestureText="Ctrl+V" Click="Paste_Click"/>
                         <Separator/>
+                        <MenuItem Header="Clear" Click="Clear_Click"/>
                         <MenuItem Header="Select All" InputGestureText="Ctrl+A" Click="SelectAll_Click"/>
                     </ContextMenu>
                 </avalonedit:TextEditor.ContextMenu>
             </avalonedit:TextEditor>
 
-            <StatusBar x:Name="StatusBar" Grid.Row="1" Background="{DynamicResource StatusBarBackground}">
+            <StatusBar x:Name="StatusBar" Grid.Row="2" Background="{DynamicResource StatusBarBackground}">
                 <StatusBarItem>
                     <TextBlock x:Name="StatusLineCol" Text="Ln 1, Col 1" Foreground="White"/>
                 </StatusBarItem>
