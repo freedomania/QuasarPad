@@ -45,9 +45,15 @@
                 <MenuItem Header="_HTML Test..." Click="HtmlTest_Click"/>
                 <MenuItem Header="Text Too_ls..." Click="TextTools_Click"/>
                 <Separator/>
+                <MenuItem Header="_Regex Tester..." Click="RegexTester_Click"/>
+                <MenuItem Header="_Diff..." Click="Diff_Click"/>
+                <MenuItem Header="_Timestamp Tools..." Click="Timestamp_Click"/>
+                <Separator/>
                 <MenuItem Header="_JSON Format" Click="JsonFormat_Click"/>
+                <MenuItem Header="_YAML Clean" Click="YamlFormat_Click"/>
                 <MenuItem Header="Format _Text" Click="FormatText_Click"/>
                 <MenuItem Header="_Reflow Paragraphs" Click="ReflowText_Click"/>
+                <MenuItem Header="Make _Slug" Click="Slug_Click"/>
                 <Separator/>
                 <MenuItem Header="_Settings..." Click="Settings_Click"/>
             </MenuItem>
