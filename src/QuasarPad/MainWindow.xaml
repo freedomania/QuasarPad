@@ -49,11 +49,19 @@
                 <MenuItem Header="_Diff..." Click="Diff_Click"/>
                 <MenuItem Header="_Timestamp Tools..." Click="Timestamp_Click"/>
                 <Separator/>
+                <MenuItem Header="_Unit Converter..." Click="UnitConverter_Click"/>
+                <MenuItem Header="_Number Base..." Click="NumberBase_Click"/>
+                <MenuItem Header="_Color Tools..." Click="ColorTools_Click"/>
+                <MenuItem Header="_Generators..." Click="Generators_Click"/>
+                <Separator/>
                 <MenuItem Header="_JSON Format" Click="JsonFormat_Click"/>
                 <MenuItem Header="_YAML Clean" Click="YamlFormat_Click"/>
                 <MenuItem Header="Format _Text" Click="FormatText_Click"/>
                 <MenuItem Header="_Reflow Paragraphs" Click="ReflowText_Click"/>
                 <MenuItem Header="Make _Slug" Click="Slug_Click"/>
+                <MenuItem Header="Sort _Lines" Click="SortLines_Click"/>
+                <MenuItem Header="_Unique Lines" Click="UniqueLines_Click"/>
+                <MenuItem Header="Sort + Unique" Click="SortUnique_Click"/>
                 <Separator/>
                 <MenuItem Header="_Settings..." Click="Settings_Click"/>
             </MenuItem>
