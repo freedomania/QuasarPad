@@ -52,7 +52,8 @@
                 <MenuItem Header="_Unit Converter..." Click="UnitConverter_Click"/>
                 <MenuItem Header="_Number Base..." Click="NumberBase_Click"/>
                 <MenuItem Header="_Color Tools..." Click="ColorTools_Click"/>
-                <MenuItem Header="_Generators..." Click="Generators_Click"/>
+                <MenuItem Header="_Generators (UUID/Password)..." Click="Generators_Click"/>
+                <MenuItem Header="URL _Shortener..." Click="UrlShorten_Click"/>
                 <Separator/>
                 <MenuItem Header="_JSON Format" Click="JsonFormat_Click"/>
                 <MenuItem Header="_YAML Clean" Click="YamlFormat_Click"/>
