@@ -1,15 +1,20 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="256" height="256">
   <defs>
-    <radialGradient id="g" cx="50%" cy="45%" r="55%">
-      <stop offset="0%" stop-color="#1e3a5f"/>
-      <stop offset="100%" stop-color="#0f172a"/>
+    <radialGradient id="bg" cx="50%" cy="42%" r="58%">
+      <stop offset="0%" stop-color="#243b5c"/>
+      <stop offset="100%" stop-color="#0b1220"/>
     </radialGradient>
+    <linearGradient id="q" x1="20%" y1="15%" x2="85%" y2="90%">
+      <stop offset="0%" stop-color="#e0f2fe"/>
+      <stop offset="55%" stop-color="#7dd3fc"/>
+      <stop offset="100%" stop-color="#0ea5e9"/>
+    </linearGradient>
   </defs>
-  <!-- Outer disc -->
-  <circle cx="128" cy="128" r="120" fill="url(#g)" stroke="#007ACC" stroke-width="8"/>
-  <!-- Inner ring -->
-  <circle cx="128" cy="128" r="88" fill="none" stroke="#38bdf8" stroke-width="3" opacity="0.65"/>
-  <!-- Geometric Q centered (no font, no star) -->
-  <circle cx="128" cy="122" r="48" fill="none" stroke="#7dd3fc" stroke-width="18"/>
-  <line x1="155" y1="155" x2="178" y2="182" stroke="#7dd3fc" stroke-width="16" stroke-linecap="round"/>
+  <!-- Background disc -->
+  <circle cx="128" cy="128" r="118" fill="url(#bg)" stroke="#0284c7" stroke-width="7"/>
+  <circle cx="128" cy="128" r="102" fill="none" stroke="#38bdf8" stroke-width="2" opacity="0.3"/>
+  <!-- Q bowl: slightly above center for optical balance -->
+  <circle cx="128" cy="118" r="50" fill="none" stroke="url(#q)" stroke-width="22"/>
+  <!-- Q tail: short, rounded, 4–5 o'clock -->
+  <path d="M155 150 L180 178" fill="none" stroke="url(#q)" stroke-width="22" stroke-linecap="round"/>
 </svg>
