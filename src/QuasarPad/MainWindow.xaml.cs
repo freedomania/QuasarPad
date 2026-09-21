@@ -19,8 +19,8 @@ namespace QuasarPad
         private Encoding _currentEncoding = Encoding.UTF8;
         private readonly SettingsService _settingsService = new();
         private readonly TextFormatService _textFormatService = new();
+        private readonly ExtraToolsService _extraTools = new();
 
-        // Solid dark / light colors applied in code (reliable)
         private static readonly SolidColorBrush DarkBg = BrushFrom("#1E1E1E");
         private static readonly SolidColorBrush DarkFg = BrushFrom("#D4D4D4");
         private static readonly SolidColorBrush DarkMenu = BrushFrom("#3C3C3C");
@@ -65,15 +65,12 @@ namespace QuasarPad
             MenuWordWrap.IsChecked = s.WordWrap;
             MenuStatusBar.IsChecked = s.ShowStatusBar;
             MenuLineNumbers.IsChecked = s.ShowLineNumbers;
-
             MainEditor.WordWrap = s.WordWrap;
             MainEditor.ShowLineNumbers = s.ShowLineNumbers;
             MainEditor.FontFamily = new FontFamily(s.FontFamily);
             MainEditor.FontSize = s.FontSize;
-
             if (s.WindowWidth > 0) Width = s.WindowWidth;
             if (s.WindowHeight > 0) Height = s.WindowHeight;
-
             ApplyTheme();
         }
 
@@ -101,12 +98,6 @@ namespace QuasarPad
                 MainEditor.Foreground = DarkFg;
                 MainEditor.LineNumbersForeground = DarkMenuFg;
                 MainEditor.TextArea.Foreground = DarkFg;
-                if (MainEditor.TextArea.Selection != null)
-                {
-                    // selection colors handled by AvalonEdit defaults mostly
-                }
-
-                // Force system menu brushes so submenu is dark
                 Application.Current.Resources[SystemColors.MenuBrushKey] = DarkPopup;
                 Application.Current.Resources[SystemColors.MenuBarBrushKey] = DarkMenu;
                 Application.Current.Resources[SystemColors.MenuTextBrushKey] = DarkMenuFg;
@@ -116,31 +107,13 @@ namespace QuasarPad
                 Application.Current.Resources[SystemColors.ControlTextBrushKey] = DarkMenuFg;
                 Application.Current.Resources[SystemColors.WindowBrushKey] = DarkBg;
                 Application.Current.Resources[SystemColors.WindowTextBrushKey] = DarkFg;
-
-                // Top menu bar
-                if (FindName("MainMenu") is Menu menu)
+                if (Content is DockPanel dp && dp.Children.Count > 0 && dp.Children[0] is Menu m)
                 {
-                    menu.Background = DarkMenu;
-                    menu.Foreground = DarkMenuFg;
+                    m.Background = DarkMenu;
+                    m.Foreground = DarkMenuFg;
+                    foreach (var item in m.Items)
+                        if (item is MenuItem mi) { mi.Foreground = DarkMenuFg; mi.Background = Brushes.Transparent; }
                 }
-                else
-                {
-                    // Menu is first child in DockPanel
-                    if (Content is DockPanel dp && dp.Children.Count > 0 && dp.Children[0] is Menu m)
-                    {
-                        m.Background = DarkMenu;
-                        m.Foreground = DarkMenuFg;
-                        foreach (var item in m.Items)
-                        {
-                            if (item is MenuItem mi)
-                            {
-                                mi.Foreground = DarkMenuFg;
-                                mi.Background = Brushes.Transparent;
-                            }
-                        }
-                    }
-                }
-
                 StatusBar.Background = StatusBlue;
             }
             else
@@ -150,7 +123,6 @@ namespace QuasarPad
                 MainEditor.Foreground = LightFg;
                 MainEditor.LineNumbersForeground = LightFg;
                 MainEditor.TextArea.Foreground = LightFg;
-
                 Application.Current.Resources[SystemColors.MenuBrushKey] = LightBg;
                 Application.Current.Resources[SystemColors.MenuBarBrushKey] = LightMenu;
                 Application.Current.Resources[SystemColors.MenuTextBrushKey] = LightFg;
@@ -160,21 +132,13 @@ namespace QuasarPad
                 Application.Current.Resources[SystemColors.ControlTextBrushKey] = LightFg;
                 Application.Current.Resources[SystemColors.WindowBrushKey] = LightBg;
                 Application.Current.Resources[SystemColors.WindowTextBrushKey] = LightFg;
-
                 if (Content is DockPanel dp && dp.Children.Count > 0 && dp.Children[0] is Menu m)
                 {
                     m.Background = LightMenu;
                     m.Foreground = LightFg;
                     foreach (var item in m.Items)
-                    {
-                        if (item is MenuItem mi)
-                        {
-                            mi.Foreground = LightFg;
-                            mi.Background = Brushes.Transparent;
-                        }
-                    }
+                        if (item is MenuItem mi) { mi.Foreground = LightFg; mi.Background = Brushes.Transparent; }
                 }
-
                 StatusBar.Background = StatusBlue;
             }
         }
@@ -193,7 +157,6 @@ namespace QuasarPad
                 StatusLineCol.Text = $"Ln {loc.Line}, Col {loc.Column}";
             }
             catch { StatusLineCol.Text = "Ln 1, Col 1"; }
-
             StatusEncoding.Text = _currentEncoding.WebName.ToUpperInvariant();
             StatusMode.Text = _isPureMode ? "Pure Mode" : "Smart Mode";
             StatusCharCount.Text = $"{EditorText.Length:N0} characters";
@@ -389,6 +352,15 @@ namespace QuasarPad
         private void TextTools_Click(object sender, RoutedEventArgs e) =>
             new TextToolsWindow(EditorText) { Owner = this }.Show();
 
+        private void RegexTester_Click(object sender, RoutedEventArgs e) =>
+            new RegexTesterWindow(EditorText) { Owner = this }.Show();
+
+        private void Diff_Click(object sender, RoutedEventArgs e) =>
+            new DiffWindow(EditorText) { Owner = this }.Show();
+
+        private void Timestamp_Click(object sender, RoutedEventArgs e) =>
+            new TimestampWindow { Owner = this }.Show();
+
         private void JsonFormat_Click(object sender, RoutedEventArgs e)
         {
             try
@@ -398,6 +370,12 @@ namespace QuasarPad
                 _isModified = true; UpdateTitle();
             }
             catch { MessageBox.Show("Invalid JSON.", "JSON Format", MessageBoxButton.OK, MessageBoxImage.Warning); }
+        }
+
+        private void YamlFormat_Click(object sender, RoutedEventArgs e)
+        {
+            EditorText = _extraTools.FormatYamlLike(EditorText);
+            _isModified = true; UpdateTitle();
         }
 
         private void FormatText_Click(object sender, RoutedEventArgs e)
@@ -412,6 +390,24 @@ namespace QuasarPad
             _isModified = true; UpdateTitle();
         }
 
+        private void Slug_Click(object sender, RoutedEventArgs e)
+        {
+            string source = MainEditor.SelectedText;
+            if (string.IsNullOrWhiteSpace(source)) source = EditorText;
+            string slug = _extraTools.ToSlug(source);
+            if (MainEditor.SelectionLength > 0)
+            {
+                int start = MainEditor.SelectionStart;
+                MainEditor.Document.Replace(start, MainEditor.SelectionLength, slug);
+            }
+            else
+            {
+                EditorText = slug;
+            }
+            _isModified = true; UpdateTitle();
+            MessageBox.Show($"Slug:\n{slug}", "Make Slug");
+        }
+
         private void Settings_Click(object sender, RoutedEventArgs e)
         {
             var win = new SettingsWindow(_settingsService) { Owner = this };
@@ -420,7 +416,12 @@ namespace QuasarPad
 
         private void About_Click(object sender, RoutedEventArgs e) =>
             MessageBox.Show(
-                "QuasarPad v1.2.2\n\nOffline Text & Markup Toolkit\nDark / Light theme applied in code for reliability.\n\nMIT License\nhttps://github.com/freedomania/QuasarPad",
+                "QuasarPad v1.3.0\n\n" +
+                "Offline Text & Markup Toolkit\n" +
+                "• Markdown → HTML, HTML Test\n" +
+                "• Text Tools, Regex Tester, Diff\n" +
+                "• Timestamp, Slug, JSON/YAML\n\n" +
+                "MIT License\nhttps://github.com/freedomania/QuasarPad",
                 "About QuasarPad");
 
         private void OpenGitHub_Click(object sender, RoutedEventArgs e)
