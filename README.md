@@ -9,6 +9,7 @@ A lightweight editor with built-in converters and utilities — **no telemetry**
 </p>
 
 > **Download the installer:** [Latest Release](https://github.com/freedomania/QuasarPad/releases/latest)  
+> **User guide:** [docs/USAGE.md](docs/USAGE.md)  
 > Testers welcome — open an [Issue](https://github.com/freedomania/QuasarPad/issues) if something breaks.
 
 ## Why QuasarPad?
@@ -41,6 +42,12 @@ Focused on **offline utilities** next to a clean editor — not a Notepad++ plug
 2. Download **QuasarPad-Setup-….exe**
 3. Install (default path: **`C:\Program Files\QuasarPad`**)
 4. Optional: create a desktop shortcut during setup
+
+## Usage
+
+Step-by-step guide for the editor and every Tools menu item:
+
+**[docs/USAGE.md](docs/USAGE.md)**
 
 ## Build from source
 
